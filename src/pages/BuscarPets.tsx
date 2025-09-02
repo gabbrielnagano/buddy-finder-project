@@ -145,11 +145,11 @@ export default function BuscarPets() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
-    species: "",
+    species: "todas",
     breed: "",
-    age: "",
-    size: "",
-    gender: "",
+    age: "todas",
+    size: "todos",
+    gender: "todos",
     location: "",
     vaccinated: false,
     castrated: false,
@@ -163,11 +163,11 @@ export default function BuscarPets() {
                          pet.breed.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          pet.location.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesSpecies = !filters.species || pet.species === filters.species;
+    const matchesSpecies = !filters.species || filters.species === "todas" || pet.species === filters.species;
     const matchesBreed = !filters.breed || pet.breed.toLowerCase().includes(filters.breed.toLowerCase());
-    const matchesAge = !filters.age || pet.age === filters.age;
-    const matchesSize = !filters.size || pet.size === filters.size;
-    const matchesGender = !filters.gender || pet.gender === filters.gender;
+    const matchesAge = !filters.age || filters.age === "todas" || pet.age === filters.age;
+    const matchesSize = !filters.size || filters.size === "todos" || pet.size === filters.size;
+    const matchesGender = !filters.gender || filters.gender === "todos" || pet.gender === filters.gender;
     const matchesLocation = !filters.location || pet.location.toLowerCase().includes(filters.location.toLowerCase());
     
     const matchesVaccinated = !filters.vaccinated || pet.vaccinated === filters.vaccinated;
@@ -183,11 +183,11 @@ export default function BuscarPets() {
 
   const clearFilters = () => {
     setFilters({
-      species: "",
+      species: "todas",
       breed: "",
-      age: "",
-      size: "",
-      gender: "",
+      age: "todas",
+      size: "todos",
+      gender: "todos",
       location: "",
       vaccinated: false,
       castrated: false,
@@ -262,7 +262,7 @@ export default function BuscarPets() {
                       <SelectValue placeholder="Todas" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Todas</SelectItem>
+                      <SelectItem value="todas">Todas</SelectItem>
                       <SelectItem value="cachorro">Cachorro</SelectItem>
                       <SelectItem value="gato">Gato</SelectItem>
                     </SelectContent>
@@ -276,7 +276,7 @@ export default function BuscarPets() {
                       <SelectValue placeholder="Todas" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Todas</SelectItem>
+                      <SelectItem value="todas">Todas</SelectItem>
                       <SelectItem value="filhote">Filhote</SelectItem>
                       <SelectItem value="adulto">Adulto</SelectItem>
                       <SelectItem value="idoso">Idoso</SelectItem>
@@ -291,7 +291,7 @@ export default function BuscarPets() {
                       <SelectValue placeholder="Todos" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Todos</SelectItem>
+                      <SelectItem value="todos">Todos</SelectItem>
                       <SelectItem value="pequeno">Pequeno</SelectItem>
                       <SelectItem value="medio">Médio</SelectItem>
                       <SelectItem value="grande">Grande</SelectItem>
@@ -306,7 +306,7 @@ export default function BuscarPets() {
                       <SelectValue placeholder="Todos" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Todos</SelectItem>
+                      <SelectItem value="todos">Todos</SelectItem>
                       <SelectItem value="macho">Macho</SelectItem>
                       <SelectItem value="femea">Fêmea</SelectItem>
                     </SelectContent>
