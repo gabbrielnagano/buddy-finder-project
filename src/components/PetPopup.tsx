@@ -135,10 +135,10 @@ export function PetPopup({ pet, open, onClose }: PetPopupProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="absolute top-4 right-4 z-10 bg-background/80 backdrop-blur-sm hover:bg-background/90 rounded-full"
+          className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 bg-background/80 backdrop-blur-sm hover:bg-background/90 rounded-full"
           onClick={onClose}
         >
-          <X className="h-5 w-5" />
+          <X className="h-4 w-4 sm:h-5 sm:w-5" />
         </Button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
@@ -147,47 +147,49 @@ export function PetPopup({ pet, open, onClose }: PetPopupProps) {
             <img 
               src={pet.image} 
               alt={pet.name}
-              className="w-full h-full object-cover min-h-[300px] lg:min-h-[600px]"
+              className="w-full h-full object-cover min-h-[250px] sm:min-h-[300px] lg:min-h-[600px]"
             />
             
             {/* Action Buttons Overlay */}
-            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-              <div className="flex items-center gap-3">
+            <div className="absolute bottom-2 left-2 right-2 sm:bottom-4 sm:left-4 sm:right-4 flex justify-between items-end">
+              <div className="flex items-center gap-1 sm:gap-3">
                 <Button
                   variant="secondary"
                   size="sm"
-                  className="bg-background/90 backdrop-blur-sm hover:bg-background text-foreground shadow-lg"
+                  className="bg-background/90 backdrop-blur-sm hover:bg-background text-foreground shadow-lg text-xs sm:text-sm p-1 sm:p-2"
                   onClick={handleLike}
                 >
-                  <Heart className={`h-4 w-4 mr-2 ${isLiked ? 'fill-red-500 text-red-500' : ''}`} />
-                  {likeCount}
+                  <Heart className={`h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2 ${isLiked ? 'fill-red-500 text-red-500' : ''}`} />
+                  <span className="hidden sm:inline">{likeCount}</span>
+                  <span className="sm:hidden">{likeCount > 999 ? '999+' : likeCount}</span>
                 </Button>
                 <Button
                   variant="secondary"
                   size="sm"
-                  className="bg-background/90 backdrop-blur-sm hover:bg-background text-foreground shadow-lg"
+                  className="bg-background/90 backdrop-blur-sm hover:bg-background text-foreground shadow-lg text-xs sm:text-sm p-1 sm:p-2"
                 >
-                  <MessageCircle className="h-4 w-4 mr-2" />
-                  {comments.length}
+                  <MessageCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">{comments.length}</span>
+                  <span className="sm:hidden">{comments.length}</span>
                 </Button>
               </div>
               
-              <div className="flex gap-2">
+              <div className="flex gap-1 sm:gap-2">
                 <Button
                   variant="secondary"
                   size="icon"
-                  className="bg-background/90 backdrop-blur-sm hover:bg-background text-foreground shadow-lg"
+                  className="bg-background/90 backdrop-blur-sm hover:bg-background text-foreground shadow-lg h-8 w-8 sm:h-10 sm:w-10"
                   onClick={handleShare}
                 >
-                  <Share2 className="h-4 w-4" />
+                  <Share2 className="h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
                 <Button
                   variant="secondary"
                   size="icon"
-                  className="bg-background/90 backdrop-blur-sm hover:bg-background text-foreground shadow-lg"
+                  className="bg-background/90 backdrop-blur-sm hover:bg-background text-foreground shadow-lg h-8 w-8 sm:h-10 sm:w-10"
                   onClick={() => setIsSaved(!isSaved)}
                 >
-                  <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-primary text-primary' : ''}`} />
+                  <Bookmark className={`h-3 w-3 sm:h-4 sm:w-4 ${isSaved ? 'fill-primary text-primary' : ''}`} />
                 </Button>
               </div>
             </div>
@@ -196,16 +198,16 @@ export function PetPopup({ pet, open, onClose }: PetPopupProps) {
           {/* Content Section */}
           <div className="flex flex-col h-full">
             {/* Header */}
-            <div className="p-6 border-b">
-              <div className="flex items-start justify-between mb-4">
+            <div className="p-3 sm:p-6 border-b">
+              <div className="flex items-start justify-between mb-3 sm:mb-4">
                 <div>
-                  <h1 className="text-3xl font-bold text-foreground mb-2">
+                  <h1 className="text-xl sm:text-3xl font-bold text-foreground mb-1 sm:mb-2">
                     {pet.name} {pet.species === "cachorro" ? "🐕" : "🐱"}
                   </h1>
-                  <p className="text-lg text-muted-foreground mb-2">
+                  <p className="text-sm sm:text-lg text-muted-foreground mb-1 sm:mb-2">
                     {pet.breed}
                   </p>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground flex-wrap">
                     <span className="capitalize">{pet.age}</span>
                     <span>•</span>
                     <span className="capitalize">{pet.gender}</span>
@@ -215,19 +217,19 @@ export function PetPopup({ pet, open, onClose }: PetPopupProps) {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <MapPin className="h-4 w-4" />
+              <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                <MapPin className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>{pet.location}</span>
               </div>
             </div>
 
             {/* Scrollable Content */}
             <ScrollArea className="flex-1">
-              <div className="p-6 space-y-6">
+              <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
                 {/* Description */}
                 <div>
-                  <h3 className="font-semibold text-lg mb-3">Sobre {pet.name}</h3>
-                  <p className="text-muted-foreground leading-relaxed">
+                  <h3 className="font-semibold text-base sm:text-lg mb-2 sm:mb-3">Sobre {pet.name}</h3>
+                  <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
                     {pet.description}
                   </p>
                 </div>
@@ -235,12 +237,12 @@ export function PetPopup({ pet, open, onClose }: PetPopupProps) {
                 {/* Characteristics */}
                 {getCharacteristics().length > 0 && (
                   <div>
-                    <h3 className="font-semibold text-lg mb-3">Características</h3>
-                    <div className="grid grid-cols-2 gap-3">
+                    <h3 className="font-semibold text-base sm:text-lg mb-2 sm:mb-3">Características</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                       {getCharacteristics().map((char, index) => (
-                        <div key={index} className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-                          <char.icon className={`h-5 w-5 ${char.color}`} />
-                          <span className="font-medium">{char.label}</span>
+                        <div key={index} className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-muted/50">
+                          <char.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${char.color}`} />
+                          <span className="font-medium text-sm sm:text-base">{char.label}</span>
                         </div>
                       ))}
                     </div>
@@ -249,11 +251,11 @@ export function PetPopup({ pet, open, onClose }: PetPopupProps) {
 
                 {/* Comments Section */}
                 <div>
-                  <h3 className="font-semibold text-lg mb-4">Comentários ({comments.length})</h3>
+                  <h3 className="font-semibold text-base sm:text-lg mb-3 sm:mb-4">Comentários ({comments.length})</h3>
                   
                   {/* Add Comment */}
-                  <div className="flex gap-3 mb-6">
-                    <Avatar className="h-8 w-8">
+                  <div className="flex gap-2 sm:gap-3 mb-4 sm:mb-6">
+                    <Avatar className="h-6 w-6 sm:h-8 sm:w-8">
                       <AvatarFallback>V</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 flex gap-2">
@@ -262,28 +264,28 @@ export function PetPopup({ pet, open, onClose }: PetPopupProps) {
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
-                        className="flex-1"
+                        className="flex-1 text-sm"
                       />
-                      <Button onClick={handleAddComment} size="sm">
-                        <Send className="h-4 w-4" />
+                      <Button onClick={handleAddComment} size="sm" className="h-8 w-8 sm:h-10 sm:w-auto px-2 sm:px-4">
+                        <Send className="h-3 w-3 sm:h-4 sm:w-4" />
                       </Button>
                     </div>
                   </div>
 
                   {/* Comments List */}
-                  <div className="space-y-4">
+                  <div className="space-y-3 sm:space-y-4">
                     {comments.map((comment) => (
-                      <div key={comment.id} className="flex gap-3">
-                        <Avatar className="h-8 w-8">
+                      <div key={comment.id} className="flex gap-2 sm:gap-3">
+                        <Avatar className="h-6 w-6 sm:h-8 sm:w-8">
                           <AvatarImage src={comment.avatar} alt={comment.user} />
                           <AvatarFallback>{comment.user.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="text-sm font-medium">{comment.user}</span>
+                            <span className="text-xs sm:text-sm font-medium">{comment.user}</span>
                             <span className="text-xs text-muted-foreground">{comment.timestamp}</span>
                           </div>
-                          <p className="text-sm text-muted-foreground">{comment.comment}</p>
+                          <p className="text-xs sm:text-sm text-muted-foreground">{comment.comment}</p>
                         </div>
                       </div>
                     ))}
@@ -293,12 +295,12 @@ export function PetPopup({ pet, open, onClose }: PetPopupProps) {
             </ScrollArea>
 
             {/* Bottom Actions */}
-            <div className="p-6 border-t bg-background">
-              <div className="flex gap-3">
-                <Button className="flex-1" size="lg">
+            <div className="p-3 sm:p-6 border-t bg-background">
+              <div className="flex gap-2 sm:gap-3 flex-col sm:flex-row">
+                <Button className="flex-1 text-sm sm:text-base" size="sm">
                   ❤️ Quero Adotar
                 </Button>
-                <Button variant="outline" size="lg">
+                <Button variant="outline" className="flex-1 text-sm sm:text-base" size="sm">
                   💬 Conversar
                 </Button>
               </div>
