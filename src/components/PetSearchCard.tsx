@@ -3,7 +3,7 @@ import { Heart, MessageCircle, Share2, Bookmark, Eye, MapPin, Calendar, Users } 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { PetDetailsDialog } from "./PetDetailsDialog";
+import { PetPopup } from "./PetPopup";
 
 interface Pet {
   id: string;
@@ -80,10 +80,10 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
 
   return (
     <>
-      <PetDetailsDialog 
+      <PetPopup 
         pet={pet}
         open={isDialogOpen} 
-        onOpenChange={setIsDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
       />
       <Card className="overflow-hidden hover:shadow-soft transition-all duration-300 animate-fade-in group">
         <div className="relative cursor-pointer" onClick={() => setIsDialogOpen(true)}>
