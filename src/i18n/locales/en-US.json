@@ -1,0 +1,100 @@
+{
+  "app": {
+    "title": "BuddyFinder",
+    "subtitle": "Pet Adoption"
+  },
+  "navigation": {
+    "search": "Search Pets",
+    "settings": "Settings",
+    "help": "Help"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Customize your BuddyFinder experience",
+    "general": "General",
+    "notifications": "Notifications",
+    "pets": "Pets",
+    "save": "Save Settings",
+    "saved": "Settings saved",
+    "savedDescription": "Your preferences have been successfully updated!",
+
+    "appearance": {
+      "title": "Appearance & Layout",
+      "description": "Customize the interface appearance",
+      "theme": "Theme",
+      "themeDescription": "Choose between light, dark or automatic mode",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System",
+      "language": "Language",
+      "languageDescription": "Select your preferred language",
+      "layout": "Display Layout",
+      "layoutDescription": "How pets are shown in search",
+      "grid": "Grid",
+      "list": "List",
+      "compact": "Compact"
+    },
+
+    "notifications": {
+      "title": "Notifications",
+      "description": "Manage how you receive notifications",
+      "push": "Push Notifications",
+      "pushDescription": "Receive notifications in browser",
+      "email": "Email Notifications",
+      "emailDescription": "Receive updates via email",
+      "sms": "SMS Notifications",
+      "smsDescription": "Receive important text messages"
+    },
+
+    "pets": {
+      "title": "Pet Preferences",
+      "description": "Configure your search and alert preferences",
+      "favoriteSpecies": "Favorite Species",
+      "favoriteSpeciesDescription": "Select the types of pets that interest you most",
+      "newPetAlerts": "New Pet Alerts",
+      "newPetAlertsDescription": "Be notified when pets of your favorite species become available",
+      "defaultFilters": "Default Search Filters",
+      "age": "Age",
+      "size": "Size",
+      "location": "Location",
+      "allAges": "All",
+      "puppy": "Puppy",
+      "young": "Young",
+      "adult": "Adult",
+      "senior": "Senior",
+      "allSizes": "All",
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large",
+      "nearby": "Near me",
+      "city": "My city",
+      "state": "My state",
+      "country": "Entire country"
+    },
+
+    "species": {
+      "dogs": "Dogs",
+      "cats": "Cats",
+      "birds": "Birds",
+      "rabbits": "Rabbits",
+      "fish": "Fish",
+      "reptiles": "Reptiles"
+    }
+  },
+
+  "pet": {
+    "wantToAdopt": "Want to Adopt",
+    "contact": "Contact",
+    "like": "Like",
+    "share": "Share",
+    "save": "Save",
+    "comments": "Comments",
+    "addComment": "Add a comment...",
+    "post": "Post",
+    "location": "Location",
+    "age": "Age",
+    "size": "Size",
+    "months": "months",
+    "years": "years"
+  }
+}

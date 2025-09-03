@@ -1,0 +1,100 @@
+{
+  "app": {
+    "title": "BuddyFinder",
+    "subtitle": "Adopción de Mascotas"
+  },
+  "navigation": {
+    "search": "Buscar Mascotas",
+    "settings": "Configuración",
+    "help": "Ayuda"
+  },
+  "settings": {
+    "title": "Configuración",
+    "subtitle": "Personaliza tu experiencia en BuddyFinder",
+    "general": "General",
+    "notifications": "Notificaciones",
+    "pets": "Mascotas",
+    "save": "Guardar Configuración",
+    "saved": "Configuración guardada",
+    "savedDescription": "¡Tus preferencias han sido actualizadas exitosamente!",
+
+    "appearance": {
+      "title": "Apariencia y Diseño",
+      "description": "Personaliza la apariencia de la interfaz",
+      "theme": "Tema",
+      "themeDescription": "Elige entre modo claro, oscuro o automático",
+      "light": "Claro",
+      "dark": "Oscuro",
+      "system": "Sistema",
+      "language": "Idioma",
+      "languageDescription": "Selecciona tu idioma preferido",
+      "layout": "Diseño de Visualización",
+      "layoutDescription": "Cómo se muestran las mascotas en la búsqueda",
+      "grid": "Cuadrícula",
+      "list": "Lista",
+      "compact": "Compacto"
+    },
+
+    "notifications": {
+      "title": "Notificaciones",
+      "description": "Gestiona cómo recibes notificaciones",
+      "push": "Notificaciones Push",
+      "pushDescription": "Recibe notificaciones en el navegador",
+      "email": "Notificaciones por Email",
+      "emailDescription": "Recibe actualizaciones por correo electrónico",
+      "sms": "Notificaciones por SMS",
+      "smsDescription": "Recibe mensajes de texto importantes"
+    },
+
+    "pets": {
+      "title": "Preferencias de Mascotas",
+      "description": "Configura tus preferencias de búsqueda y alertas",
+      "favoriteSpecies": "Especies Favoritas",
+      "favoriteSpeciesDescription": "Selecciona los tipos de mascotas que más te interesan",
+      "newPetAlerts": "Alertas de Nuevas Mascotas",
+      "newPetAlertsDescription": "Recibe notificaciones cuando estén disponibles mascotas de tus especies favoritas",
+      "defaultFilters": "Filtros de Búsqueda por Defecto",
+      "age": "Edad",
+      "size": "Tamaño",
+      "location": "Ubicación",
+      "allAges": "Todas",
+      "puppy": "Cachorro",
+      "young": "Joven",
+      "adult": "Adulto",
+      "senior": "Mayor",
+      "allSizes": "Todos",
+      "small": "Pequeño",
+      "medium": "Mediano",
+      "large": "Grande",
+      "nearby": "Cerca de mí",
+      "city": "Mi ciudad",
+      "state": "Mi estado",
+      "country": "Todo el país"
+    },
+
+    "species": {
+      "dogs": "Perros",
+      "cats": "Gatos",
+      "birds": "Pájaros",
+      "rabbits": "Conejos",
+      "fish": "Peces",
+      "reptiles": "Reptiles"
+    }
+  },
+
+  "pet": {
+    "wantToAdopt": "Quiero Adoptar",
+    "contact": "Contactar",
+    "like": "Me Gusta",
+    "share": "Compartir",
+    "save": "Guardar",
+    "comments": "Comentarios",
+    "addComment": "Añadir comentario...",
+    "post": "Publicar",
+    "location": "Ubicación",
+    "age": "Edad",
+    "size": "Tamaño",
+    "months": "meses",
+    "years": "años"
+  }
+}

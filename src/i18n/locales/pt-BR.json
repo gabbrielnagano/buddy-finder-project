@@ -1,0 +1,100 @@
+{
+  "app": {
+    "title": "BuddyFinder",
+    "subtitle": "Adoção de Pets"
+  },
+  "navigation": {
+    "search": "Buscar Pets",
+    "settings": "Configurações",
+    "help": "Ajuda"
+  },
+  "settings": {
+    "title": "Configurações",
+    "subtitle": "Personalize sua experiência no BuddyFinder",
+    "general": "Geral",
+    "notifications": "Notificações",
+    "pets": "Pets",
+    "save": "Salvar Configurações",
+    "saved": "Configurações salvas",
+    "savedDescription": "Suas preferências foram atualizadas com sucesso!",
+
+    "appearance": {
+      "title": "Aparência e Layout",
+      "description": "Personalize a aparência da interface",
+      "theme": "Tema",
+      "themeDescription": "Escolha entre modo claro, escuro ou automático",
+      "light": "Claro",
+      "dark": "Escuro",
+      "system": "Sistema",
+      "language": "Idioma",
+      "languageDescription": "Selecione seu idioma preferido",
+      "layout": "Layout de Exibição",
+      "layoutDescription": "Como os pets são mostrados na busca",
+      "grid": "Grade",
+      "list": "Lista",
+      "compact": "Compacto"
+    },
+
+    "notifications": {
+      "title": "Notificações",
+      "description": "Gerencie como você recebe notificações",
+      "push": "Notificações Push",
+      "pushDescription": "Receba notificações no navegador",
+      "email": "Notificações por E-mail",
+      "emailDescription": "Receba atualizações por e-mail",
+      "sms": "Notificações por SMS",
+      "smsDescription": "Receba mensagens de texto importantes"
+    },
+
+    "pets": {
+      "title": "Preferências de Pets",
+      "description": "Configure suas preferências para busca e alertas",
+      "favoriteSpecies": "Espécies Favoritas",
+      "favoriteSpeciesDescription": "Selecione os tipos de pets que mais te interessam",
+      "newPetAlerts": "Alertas de Novos Pets",
+      "newPetAlertsDescription": "Seja notificado quando pets das suas espécies favoritas estiverem disponíveis",
+      "defaultFilters": "Filtros Padrão de Busca",
+      "age": "Idade",
+      "size": "Porte",
+      "location": "Localização",
+      "allAges": "Todas",
+      "puppy": "Filhote",
+      "young": "Jovem",
+      "adult": "Adulto",
+      "senior": "Idoso",
+      "allSizes": "Todos",
+      "small": "Pequeno",
+      "medium": "Médio",
+      "large": "Grande",
+      "nearby": "Próximo a mim",
+      "city": "Minha cidade",
+      "state": "Meu estado",
+      "country": "Todo o país"
+    },
+
+    "species": {
+      "dogs": "Cachorros",
+      "cats": "Gatos",
+      "birds": "Pássaros",
+      "rabbits": "Coelhos",
+      "fish": "Peixes",
+      "reptiles": "Répteis"
+    }
+  },
+
+  "pet": {
+    "wantToAdopt": "Quero Adotar",
+    "contact": "Entrar em Contato",
+    "like": "Curtir",
+    "share": "Compartilhar",
+    "save": "Salvar",
+    "comments": "Comentários",
+    "addComment": "Adicionar comentário...",
+    "post": "Publicar",
+    "location": "Localização",
+    "age": "Idade",
+    "size": "Porte",
+    "months": "meses",
+    "years": "anos"
+  }
+}
