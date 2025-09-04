@@ -1,4 +1,4 @@
-import { Search, Settings, HelpCircle, Home } from "lucide-react";
+import { Search, Settings, HelpCircle, Home, Heart } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
   Sidebar,
@@ -52,6 +52,14 @@ export function AppSidebar() {
                   <NavLink to="/buscar" className="flex items-center gap-3 hover:bg-accent/50 transition-colors">
                     <Search className="h-5 w-5 text-primary" />
                     {state !== "collapsed" && <span className="font-medium">Buscar Pets</span>}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild size="lg">
+                  <NavLink to="/favoritos" className="flex items-center gap-3 hover:bg-accent/50 transition-colors">
+                    <Heart className="h-5 w-5 text-primary" />
+                    {state !== "collapsed" && <span className="font-medium">Animais Favoritos</span>}
                   </NavLink>
                 </SidebarMenuButton>
               </SidebarMenuItem>
