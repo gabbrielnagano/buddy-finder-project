@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PetPopup } from "./PetPopup";
+import { useFavorites } from "@/contexts/FavoritesContext";
 
 interface Pet {
   id: string;
@@ -28,18 +29,15 @@ interface PetSearchCardProps {
 }
 
 export function PetSearchCard({ pet }: PetSearchCardProps) {
-  const [isLiked, setIsLiked] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const { isFavorite, toggleFavorite } = useFavorites();
   const [likeCount, setLikeCount] = useState(Math.floor(Math.random() * 50) + 5);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
-  };
+  const isLiked = isFavorite(pet.id);
 
-  const handleSave = () => {
-    setIsSaved(!isSaved);
+  const handleLike = () => {
+    toggleFavorite(pet);
+    setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
   };
 
   const getSizeLabel = (size: string) => {
@@ -195,10 +193,10 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={handleSave}
-                className={`hover-scale ${isSaved ? 'text-primary' : 'text-muted-foreground'}`}
+                onClick={handleLike}
+                className={`hover-scale ${isLiked ? 'text-primary' : 'text-muted-foreground'}`}
               >
-                <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} />
+                <Bookmark className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
               </Button>
             </div>
           </div>
