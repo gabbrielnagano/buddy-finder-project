@@ -1,4 +1,4 @@
-import { Search, Settings, HelpCircle } from "lucide-react";
+import { Search, Settings, HelpCircle, Home } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
   Sidebar,
@@ -39,6 +39,14 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild size="lg">
+                  <NavLink to="/" className="flex items-center gap-3 hover:bg-accent/50 transition-colors">
+                    <Home className="h-5 w-5 text-primary" />
+                    {state !== "collapsed" && <span className="font-medium">Início</span>}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild size="lg">
                   <NavLink to="/buscar" className="flex items-center gap-3 hover:bg-accent/50 transition-colors">
