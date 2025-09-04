@@ -40,7 +40,7 @@ export default function Favoritos() {
                 <p className="mb-4">Comece a adicionar pets aos seus favoritos para vê-los aqui.</p>
               </div>
               <Button asChild>
-                <a href="/buscar" className="flex items-center gap-2">
+                <a href="/" className="flex items-center gap-2">
                   <Search className="h-4 w-4" />
                   Buscar Pets
                 </a>
