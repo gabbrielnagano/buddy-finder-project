@@ -91,11 +91,11 @@ const Settings = () => {
           </TabsTrigger>
           <TabsTrigger value="notifications" className="flex items-center gap-2">
             <Bell className="w-4 h-4" />
-            <span className="hidden sm:inline">{t('settings.notifications')}</span>
+            <span className="hidden sm:inline">Notificações</span>
           </TabsTrigger>
           <TabsTrigger value="pets" className="flex items-center gap-2">
             <PawPrint className="w-4 h-4" />
-            <span className="hidden sm:inline">{t('settings.pets')}</span>
+            <span className="hidden sm:inline">Pets</span>
           </TabsTrigger>
         </TabsList>
 
