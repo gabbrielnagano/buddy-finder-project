@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { PetSearchCard } from "@/components/PetSearchCard";
+import { Link } from "react-router-dom";
 
 export default function Favoritos() {
   const { favorites } = useFavorites();
@@ -40,10 +41,10 @@ export default function Favoritos() {
                 <p className="mb-4">Comece a adicionar pets aos seus favoritos para vê-los aqui.</p>
               </div>
               <Button asChild>
-                <a href="/" className="flex items-center gap-2">
+                <Link to="/" className="flex items-center gap-2">
                   <Search className="h-4 w-4" />
                   Buscar Pets
-                </a>
+                </Link>
               </Button>
             </CardContent>
           </Card>
