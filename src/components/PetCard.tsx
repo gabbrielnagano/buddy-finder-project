@@ -43,14 +43,14 @@ export function PetCard({ id, name, image, type, age, location }: PetCardProps) 
             {type === "cachorro" ? "🐕 Cachorro" : "🐱 Gato"}
           </Badge>
           {age && (
-            <Badge variant="outline" className="text-xs bg-white/90 backdrop-blur-sm">
+            <Badge variant="outline" className="text-xs bg-card border-border text-card-foreground">
               {age}
             </Badge>
           )}
         </div>
         {location && (
           <div className="absolute bottom-3 right-3">
-            <Badge variant="outline" className="text-xs bg-white/90 backdrop-blur-sm">
+            <Badge variant="outline" className="text-xs bg-card border-border text-card-foreground">
               📍 {location}
             </Badge>
           </div>

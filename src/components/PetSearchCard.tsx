@@ -92,8 +92,8 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div className="bg-white/90 rounded-full px-4 py-2 backdrop-blur-sm">
-              <span className="text-sm font-medium text-gray-800">Ver detalhes</span>
+            <div className="bg-card/95 rounded-full px-4 py-2 backdrop-blur-sm border border-border">
+              <span className="text-sm font-medium text-card-foreground">Ver detalhes</span>
             </div>
           </div>
           <div className="absolute top-3 left-3 flex gap-2 flex-wrap">
@@ -103,12 +103,12 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
             >
               {pet.species === "cachorro" ? "🐕 Cachorro" : "🐱 Gato"}
             </Badge>
-            <Badge variant="outline" className="text-xs bg-white/90 backdrop-blur-sm">
+            <Badge variant="outline" className="text-xs bg-card border-border text-card-foreground">
               {getAgeLabel(pet.age)}
             </Badge>
           </div>
           <div className="absolute bottom-3 right-3">
-            <Badge variant="outline" className="text-xs bg-white/90 backdrop-blur-sm flex items-center gap-1">
+            <Badge variant="outline" className="text-xs bg-card border-border text-card-foreground flex items-center gap-1">
               <MapPin className="h-3 w-3" />
               {pet.location}
             </Badge>
@@ -149,7 +149,7 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
                 </Badge>
               ))}
               {getCharacteristics().length > 3 && (
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="outline" className="text-xs bg-muted text-muted-foreground">
                   +{getCharacteristics().length - 3}
                 </Badge>
               )}
