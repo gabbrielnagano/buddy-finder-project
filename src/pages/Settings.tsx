@@ -51,11 +51,21 @@ const Settings = () => {
     setLanguage(newLanguage);
     i18n.changeLanguage(newLanguage);
     localStorage.setItem('language', newLanguage);
+    toast({
+      title: t('settings.saved'),
+      description: t('settings.savedDescription'),
+      duration: 3000,
+    });
   };
 
   const handleThemePreview = (newTheme: string) => {
     setPreviewTheme(newTheme);
     setTheme(newTheme);
+    toast({
+      title: t('settings.saved'),
+      description: t('settings.savedDescription'),
+      duration: 3000,
+    });
   };
 
   const toggleSpecies = (species: string) => {
@@ -406,12 +416,6 @@ const Settings = () => {
           </Card>
         </TabsContent>
       </Tabs>
-
-      <div className="flex justify-end pt-6">
-        <Button onClick={handleSaveSettings} className="min-w-32">
-          {t('settings.save')}
-        </Button>
-      </div>
     </div>
   );
 };
