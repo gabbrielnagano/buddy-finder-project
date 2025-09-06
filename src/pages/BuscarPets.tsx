@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { PetSearchCard } from "@/components/PetSearchCard";
+import { useTranslation } from "react-i18next";
 
 // Import pet images
 import goldenRetrieverImg from "@/assets/pets/golden-retriever.jpg";
@@ -142,6 +143,7 @@ const mockPets: Pet[] = [
 ];
 
 export default function BuscarPets() {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
@@ -203,10 +205,10 @@ export default function BuscarPets() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2 text-foreground">
-            Buscar Pets para Adoção
+            {t('search.title')}
           </h1>
           <p className="text-lg text-muted-foreground">
-            Encontre seu novo melhor amigo usando nossos filtros avançados
+            {t('search.subtitle')}
           </p>
         </div>
 
@@ -217,7 +219,7 @@ export default function BuscarPets() {
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
-                  placeholder="Busque por nome, raça ou localização..."
+                  placeholder={t('search.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -229,7 +231,7 @@ export default function BuscarPets() {
                 className="flex items-center gap-2"
               >
                 <Sliders className="h-4 w-4" />
-                Filtros Avançados
+                {t('search.advancedFilters')}
               </Button>
             </div>
           </CardContent>
@@ -242,29 +244,29 @@ export default function BuscarPets() {
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
                   <Filter className="h-5 w-5" />
-                  Filtros Avançados
+                  {t('search.advancedFilters')}
                 </CardTitle>
                 <Button variant="ghost" onClick={clearFilters} className="text-sm">
-                  Limpar Filtros
+                  {t('search.clearFilters')}
                 </Button>
               </div>
               <CardDescription>
-                Refine sua busca para encontrar o pet ideal
+                {t('search.refineSearch')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Basic Filters */}
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 <div>
-                  <Label htmlFor="species" className="text-sm font-medium mb-2 block">Espécie</Label>
+                  <Label htmlFor="species" className="text-sm font-medium mb-2 block">{t('search.species')}</Label>
                   <Select value={filters.species} onValueChange={(value) => setFilters({...filters, species: value})}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Todas" />
+                      <SelectValue placeholder={t('search.all')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="todas">Todas</SelectItem>
-                      <SelectItem value="cachorro">Cachorro</SelectItem>
-                      <SelectItem value="gato">Gato</SelectItem>
+                      <SelectItem value="todas">{t('search.all')}</SelectItem>
+                      <SelectItem value="cachorro">{t('search.dog')}</SelectItem>
+                      <SelectItem value="gato">{t('search.cat')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -397,11 +399,11 @@ export default function BuscarPets() {
         {/* Results */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold text-foreground">
-            {filteredPets.length} pet{filteredPets.length !== 1 ? 's' : ''} encontrado{filteredPets.length !== 1 ? 's' : ''}
+            {t('search.resultsFound', { count: filteredPets.length })}
           </h2>
           {filteredPets.length > 0 && (
             <Badge variant="secondary" className="text-sm">
-              {filteredPets.length} de {mockPets.length} pets
+              {filteredPets.length} {t('search.of')} {mockPets.length} pets
             </Badge>
           )}
         </div>
@@ -412,11 +414,11 @@ export default function BuscarPets() {
             <CardContent>
               <div className="text-muted-foreground mb-4">
                 <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <h3 className="text-lg font-semibold mb-2">Nenhum pet encontrado</h3>
-                <p>Tente ajustar os filtros para encontrar mais resultados.</p>
+                <h3 className="text-lg font-semibold mb-2">{t('search.noResults')}</h3>
+                <p>{t('search.adjustFilters')}</p>
               </div>
               <Button onClick={clearFilters} variant="outline">
-                Limpar Filtros
+                {t('search.clearFilters')}
               </Button>
             </CardContent>
           </Card>

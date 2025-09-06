@@ -45,15 +45,9 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   }, [favorites]);
 
   const addToFavorites = (pet: Pet) => {
-    console.log('Adicionando pet aos favoritos:', pet.name, pet.id);
     setFavorites(prev => {
-      if (prev.find(p => p.id === pet.id)) {
-        console.log('Pet já existe nos favoritos');
-        return prev;
-      }
-      const newFavorites = [...prev, pet];
-      console.log('Novos favoritos:', newFavorites.length);
-      return newFavorites;
+      if (prev.find(p => p.id === pet.id)) return prev;
+      return [...prev, pet];
     });
   };
 
@@ -66,7 +60,6 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   };
 
   const toggleFavorite = (pet: Pet) => {
-    console.log('Toggle favorite para pet:', pet.name, 'é favorito?', isFavorite(pet.id));
     if (isFavorite(pet.id)) {
       removeFromFavorites(pet.id);
     } else {

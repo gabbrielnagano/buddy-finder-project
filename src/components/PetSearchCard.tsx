@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PetPopup } from "./PetPopup";
 import { useFavorites } from "@/contexts/FavoritesContext";
+import { useTranslation } from "react-i18next";
 
 interface Pet {
   id: string;
@@ -30,6 +31,7 @@ interface PetSearchCardProps {
 
 export function PetSearchCard({ pet }: PetSearchCardProps) {
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { t } = useTranslation();
   const [likeCount, setLikeCount] = useState(Math.floor(Math.random() * 50) + 5);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -93,7 +95,7 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="bg-card/95 rounded-full px-4 py-2 backdrop-blur-sm border border-border">
-              <span className="text-sm font-medium text-card-foreground">Ver detalhes</span>
+              <span className="text-sm font-medium text-card-foreground">{t('pet.viewDetails')}</span>
             </div>
           </div>
           <div className="absolute top-3 left-3 flex gap-2 flex-wrap">
@@ -205,11 +207,11 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
           <div className="flex gap-2 mt-4 pt-4 border-t">
             <Button variant="outline" className="flex-1" size="sm" onClick={() => setIsDialogOpen(true)}>
               <Eye className="h-4 w-4 mr-2" />
-              Ver mais
+              {t('pet.viewMore')}
             </Button>
             <Button className="flex-1" size="sm">
               <Heart className="h-4 w-4 mr-2" />
-              Quero adotar
+              {t('pet.wantToAdopt')}
             </Button>
           </div>
         </CardContent>

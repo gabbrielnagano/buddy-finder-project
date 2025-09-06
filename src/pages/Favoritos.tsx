@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { PetSearchCard } from "@/components/PetSearchCard";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function Favoritos() {
   const { favorites } = useFavorites();
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
@@ -16,18 +18,18 @@ export default function Favoritos() {
           <div className="flex items-center gap-3 mb-4">
             <Heart className="h-8 w-8 text-red-500 fill-current" />
             <h1 className="text-4xl font-bold text-foreground">
-              Animais Favoritos
+              {t('favorites.title')}
             </h1>
           </div>
           <p className="text-lg text-muted-foreground">
-            Seus pets favoritos salvos para adoção futura
+            {t('favorites.subtitle')}
           </p>
         </div>
 
         {/* Results */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold text-foreground">
-            {favorites.length} favorito{favorites.length !== 1 ? 's' : ''}
+            {t('favorites.count', { count: favorites.length })}
           </h2>
         </div>
 
@@ -37,13 +39,13 @@ export default function Favoritos() {
             <CardContent>
               <div className="text-muted-foreground mb-4">
                 <Heart className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <h3 className="text-lg font-semibold mb-2">Nenhum favorito ainda</h3>
-                <p className="mb-4">Comece a adicionar pets aos seus favoritos para vê-los aqui.</p>
+                <h3 className="text-lg font-semibold mb-2">{t('favorites.empty')}</h3>
+                <p className="mb-4">{t('favorites.emptyDescription')}</p>
               </div>
               <Button asChild>
                 <Link to="/" className="flex items-center gap-2">
                   <Search className="h-4 w-4" />
-                  Buscar Pets
+                  {t('favorites.searchPets')}
                 </Link>
               </Button>
             </CardContent>

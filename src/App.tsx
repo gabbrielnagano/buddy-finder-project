@@ -9,6 +9,7 @@ import { ThemeProvider } from "next-themes";
 import { AppSidebar } from "@/components/AppSidebar";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
+import "@/i18n";
 import Index from "./pages/Index";
 import BuscarPets from "./pages/BuscarPets";
 import Favoritos from "./pages/Favoritos";

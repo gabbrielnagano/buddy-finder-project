@@ -13,9 +13,11 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import buddyfinderLogo from "@/assets/buddyfinder-logo.png";
+import { useTranslation } from "react-i18next";
 
 export function AppSidebar() {
   const { state } = useSidebar();
+  const { t } = useTranslation();
 
   return (
     <Sidebar className={state === "collapsed" ? "w-16" : "w-64"} collapsible="icon">
@@ -28,8 +30,8 @@ export function AppSidebar() {
           />
           {state !== "collapsed" && (
             <div>
-              <h1 className="text-xl font-bold text-primary">BuddyFinder</h1>
-              <p className="text-sm text-muted-foreground">Adoção de Pets</p>
+              <h1 className="text-xl font-bold text-primary">{t('app.title')}</h1>
+              <p className="text-sm text-muted-foreground">{t('app.subtitle')}</p>
             </div>
           )}
         </div>
@@ -43,7 +45,7 @@ export function AppSidebar() {
                 <SidebarMenuButton asChild size="lg">
                   <NavLink to="/" className="flex items-center gap-3 hover:bg-accent/50 transition-colors">
                     <Home className="h-5 w-5 text-primary" />
-                    {state !== "collapsed" && <span className="font-medium">Início</span>}
+                    {state !== "collapsed" && <span className="font-medium">{t('navigation.home')}</span>}
                   </NavLink>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -51,7 +53,7 @@ export function AppSidebar() {
                 <SidebarMenuButton asChild size="lg">
                   <NavLink to="/buscar" className="flex items-center gap-3 hover:bg-accent/50 transition-colors">
                     <Search className="h-5 w-5 text-primary" />
-                    {state !== "collapsed" && <span className="font-medium">Buscar Pets</span>}
+                    {state !== "collapsed" && <span className="font-medium">{t('navigation.search')}</span>}
                   </NavLink>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -59,7 +61,7 @@ export function AppSidebar() {
                 <SidebarMenuButton asChild size="lg">
                   <NavLink to="/favoritos" className="flex items-center gap-3 hover:bg-accent/50 transition-colors">
                     <Heart className="h-5 w-5 text-primary" />
-                    {state !== "collapsed" && <span className="font-medium">Animais Favoritos</span>}
+                    {state !== "collapsed" && <span className="font-medium">{t('navigation.favorites')}</span>}
                   </NavLink>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -74,7 +76,7 @@ export function AppSidebar() {
             <SidebarMenuButton asChild>
               <NavLink to="/configuracoes" className="flex items-center gap-3 hover:bg-accent/50 transition-colors">
                 <Settings className="h-4 w-4 text-muted-foreground" />
-                {state !== "collapsed" && <span className="text-sm">Configurações</span>}
+                {state !== "collapsed" && <span className="text-sm">{t('navigation.settings')}</span>}
               </NavLink>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -82,7 +84,7 @@ export function AppSidebar() {
             <SidebarMenuButton asChild>
               <NavLink to="/ajuda" className="flex items-center gap-3 hover:bg-accent/50 transition-colors">
                 <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                {state !== "collapsed" && <span className="text-sm">Ajuda</span>}
+                {state !== "collapsed" && <span className="text-sm">{t('navigation.help')}</span>}
               </NavLink>
             </SidebarMenuButton>
           </SidebarMenuItem>
