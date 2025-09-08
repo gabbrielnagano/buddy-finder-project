@@ -1,7 +1,7 @@
 import { Heart, Search, Shield, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { PetCard } from "@/components/PetCard";
+import { PetSearchCard } from "@/components/PetSearchCard";
 
 // Import pet images
 import goldenRetrieverImg from "@/assets/pets/golden-retriever.jpg";
@@ -16,49 +16,103 @@ const mockPets = [
     id: "1",
     name: "Luna",
     image: goldenRetrieverImg,
-    type: "cachorro" as const,
-    age: "2 anos",
-    location: "São Paulo, SP"
+    species: "cachorro" as const,
+    breed: "Golden Retriever",
+    age: "adulto",
+    size: "grande" as const,
+    gender: "femea" as const,
+    location: "São Paulo, SP",
+    description: "Luna é uma cadela carinhosa e muito inteligente. Ama brincar no parque e é ótima com crianças.",
+    vaccinated: true,
+    castrated: true,
+    docile: true,
+    active: true,
+    specialNeeds: false
   },
   {
     id: "2", 
     name: "Milo",
     image: orangeCatImg,
-    type: "gato" as const,
-    age: "1 ano",
-    location: "Rio de Janeiro, RJ"
+    species: "gato" as const,
+    breed: "SRD (Sem Raça Definida)",
+    age: "filhote",
+    size: "pequeno" as const,
+    gender: "macho" as const,
+    location: "Rio de Janeiro, RJ",
+    description: "Milo é um gatinho brincalhão e cheio de energia. Adora carinho e ronrona muito alto.",
+    vaccinated: true,
+    castrated: false,
+    docile: true,
+    active: true,
+    specialNeeds: false
   },
   {
     id: "3",
     name: "Zeus",
     image: huskyPuppyImg,
-    type: "cachorro" as const,
-    age: "8 meses",
-    location: "Belo Horizonte, MG"
+    species: "cachorro" as const,
+    breed: "Husky Siberiano",
+    age: "filhote",
+    size: "medio" as const,
+    gender: "macho" as const,
+    location: "Belo Horizonte, MG",
+    description: "Zeus é um filhote muito ativo e precisa de bastante exercício. Perfeito para famílias ativas.",
+    vaccinated: true,
+    castrated: false,
+    docile: true,
+    active: true,
+    specialNeeds: false
   },
   {
     id: "4",
     name: "Nina",
     image: tuxedoCatImg,
-    type: "gato" as const,
-    age: "3 anos",
-    location: "Porto Alegre, RS"
+    species: "gato" as const,
+    breed: "SRD (Sem Raça Definida)",
+    age: "adulto",
+    size: "pequeno" as const,
+    gender: "femea" as const,
+    location: "Porto Alegre, RS",
+    description: "Nina é uma gata tranquila e independente. Ideal para apartamentos e pessoas mais calmas.",
+    vaccinated: true,
+    castrated: true,
+    docile: true,
+    active: false,
+    specialNeeds: false
   },
   {
     id: "5",
     name: "Buddy",
     image: beagleMixImg,
-    type: "cachorro" as const,
-    age: "4 anos",
-    location: "Brasília, DF"
+    species: "cachorro" as const,
+    breed: "Beagle Mix",
+    age: "adulto",
+    size: "medio" as const,
+    gender: "macho" as const,
+    location: "Brasília, DF",
+    description: "Buddy é um cão muito leal e companheiro. Adora longas caminhadas e é muito obediente.",
+    vaccinated: true,
+    castrated: true,
+    docile: true,
+    active: true,
+    specialNeeds: false
   },
   {
     id: "6",
     name: "Princesa",
     image: persianCatImg,
-    type: "gato" as const,
-    age: "5 anos",
-    location: "Salvador, BA"
+    species: "gato" as const,
+    breed: "Persa",
+    age: "idoso",
+    size: "pequeno" as const,
+    gender: "femea" as const,
+    location: "Salvador, BA",
+    description: "Princesa é uma gata sênior muito carinhosa. Procura um lar tranquilo para seus anos dourados.",
+    vaccinated: true,
+    castrated: true,
+    docile: true,
+    active: false,
+    specialNeeds: true
   }
 ];
 
@@ -109,7 +163,7 @@ const Index = () => {
                 className="animate-fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <PetCard {...pet} />
+                <PetSearchCard pet={pet} />
               </div>
             ))}
           </div>
