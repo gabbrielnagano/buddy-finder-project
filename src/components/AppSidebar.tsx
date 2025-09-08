@@ -1,4 +1,4 @@
-import { Search, Settings, HelpCircle, Home, Heart } from "lucide-react";
+import { Search, Settings, HelpCircle, Home, Heart, LogOut } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
   Sidebar,
@@ -14,10 +14,12 @@ import {
 } from "@/components/ui/sidebar";
 import buddyfinderLogo from "@/assets/buddyfinder-logo.png";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function AppSidebar() {
   const { state } = useSidebar();
   const { t } = useTranslation();
+  const { signOut } = useAuth();
 
   return (
     <Sidebar className={state === "collapsed" ? "w-16" : "w-64"} collapsible="icon">
@@ -86,6 +88,15 @@ export function AppSidebar() {
                 <HelpCircle className="h-4 w-4 text-muted-foreground" />
                 {state !== "collapsed" && <span className="text-sm">{t('navigation.help')}</span>}
               </NavLink>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton 
+              onClick={signOut}
+              className="flex items-center gap-3 hover:bg-destructive/10 hover:text-destructive transition-colors"
+            >
+              <LogOut className="h-4 w-4 text-muted-foreground" />
+              {state !== "collapsed" && <span className="text-sm">Sair</span>}
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
