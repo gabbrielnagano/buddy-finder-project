@@ -14,6 +14,7 @@ import Index from "./pages/Index";
 import BuscarPets from "./pages/BuscarPets";
 import Favoritos from "./pages/Favoritos";
 import Settings from "./pages/Settings";
+import AdicionarPet from "./pages/AdicionarPet";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,6 +48,7 @@ const AppContent = () => {
                 <Route path="/" element={<Index />} />
                 <Route path="/buscar" element={<BuscarPets />} />
                 <Route path="/favoritos" element={<Favoritos />} />
+                <Route path="/adicionar-pet" element={<AdicionarPet />} />
                 <Route path="/configuracoes" element={<Settings />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />

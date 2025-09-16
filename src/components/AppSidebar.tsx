@@ -1,4 +1,4 @@
-import { Search, Settings, HelpCircle, Home, Heart, LogOut } from "lucide-react";
+import { Search, Settings, HelpCircle, Home, Heart, LogOut, Plus } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
   Sidebar,
@@ -64,6 +64,14 @@ export function AppSidebar() {
                   <NavLink to="/favoritos" className="flex items-center gap-3 hover:bg-accent/50 transition-colors">
                     <Heart className="h-5 w-5 text-primary" />
                     {state !== "collapsed" && <span className="font-medium">{t('navigation.favorites')}</span>}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild size="lg">
+                  <NavLink to="/adicionar-pet" className="flex items-center gap-3 hover:bg-accent/50 transition-colors">
+                    <Plus className="h-5 w-5 text-primary" />
+                    {state !== "collapsed" && <span className="font-medium">{t('navigation.addPet')}</span>}
                   </NavLink>
                 </SidebarMenuButton>
               </SidebarMenuItem>
