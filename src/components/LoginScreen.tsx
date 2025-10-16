@@ -13,30 +13,50 @@ export const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, resetPassword } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      const { error } = isSignUp 
-        ? await signUp(email, password)
-        : await signIn(email, password);
+      if (isForgotPassword) {
+        const { error } = await resetPassword(email);
+        
+        if (error) {
+          toast({
+            title: "Erro",
+            description: error.message,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Email enviado!",
+            description: "Verifique sua caixa de entrada para redefinir sua senha.",
+          });
+          setIsForgotPassword(false);
+          setEmail('');
+        }
+      } else {
+        const { error } = isSignUp 
+          ? await signUp(email, password)
+          : await signIn(email, password);
 
-      if (error) {
-        toast({
-          title: "Erro",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else if (isSignUp) {
-        toast({
-          title: "Cadastro realizado!",
-          description: "Verifique seu email para confirmar a conta.",
-        });
-        setIsSignUp(false);
+        if (error) {
+          toast({
+            title: "Erro",
+            description: error.message,
+            variant: "destructive",
+          });
+        } else if (isSignUp) {
+          toast({
+            title: "Cadastro realizado!",
+            description: "Verifique seu email para confirmar a conta.",
+          });
+          setIsSignUp(false);
+        }
       }
     } catch (error) {
       toast({
@@ -61,12 +81,14 @@ export const LoginScreen = () => {
             />
           </div>
           <CardTitle className="text-2xl font-bold">
-            {isSignUp ? 'Criar Conta' : 'Entrar'}
+            {isForgotPassword ? 'Recuperar Senha' : (isSignUp ? 'Criar Conta' : 'Entrar')}
           </CardTitle>
           <CardDescription>
-            {isSignUp 
-              ? 'Crie sua conta para encontrar seu pet ideal'
-              : 'Entre na sua conta para continuar'
+            {isForgotPassword
+              ? 'Digite seu email para receber instruções de recuperação'
+              : (isSignUp 
+                ? 'Crie sua conta para encontrar seu pet ideal'
+                : 'Entre na sua conta para continuar')
             }
           </CardDescription>
         </CardHeader>
@@ -88,34 +110,36 @@ export const LoginScreen = () => {
               </div>
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 pr-10"
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-muted-foreground" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </Button>
+            {!isForgotPassword && (
+              <div className="space-y-2">
+                <Label htmlFor="password">Senha</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-10 pr-10"
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-muted-foreground" />
+                    )}
+                  </Button>
+                </div>
               </div>
-            </div>
+            )}
 
             <Button 
               type="submit" 
@@ -123,35 +147,43 @@ export const LoginScreen = () => {
               disabled={isLoading}
               variant="hero"
             >
-              {isLoading ? 'Carregando...' : (isSignUp ? 'Criar Conta' : 'Entrar')}
+              {isLoading ? 'Carregando...' : (isForgotPassword ? 'Enviar Email' : (isSignUp ? 'Criar Conta' : 'Entrar'))}
             </Button>
 
             <div className="space-y-2 text-center text-sm">
-              {!isSignUp && (
+              {!isSignUp && !isForgotPassword && (
                 <button
                   type="button"
                   className="text-primary hover:underline"
-                  onClick={() => {
-                    toast({
-                      title: "Em breve",
-                      description: "Funcionalidade em desenvolvimento.",
-                    });
-                  }}
+                  onClick={() => setIsForgotPassword(true)}
                 >
                   Esqueci minha senha
                 </button>
               )}
               
-              <div className="text-muted-foreground">
-                {isSignUp ? 'Já tem uma conta?' : 'Não tem uma conta?'}{' '}
-                <button
-                  type="button"
-                  className="text-primary hover:underline font-medium"
-                  onClick={() => setIsSignUp(!isSignUp)}
-                >
-                  {isSignUp ? 'Entrar' : 'Cadastrar-se'}
-                </button>
-              </div>
+              {isForgotPassword ? (
+                <div className="text-muted-foreground">
+                  Lembrou sua senha?{' '}
+                  <button
+                    type="button"
+                    className="text-primary hover:underline font-medium"
+                    onClick={() => setIsForgotPassword(false)}
+                  >
+                    Entrar
+                  </button>
+                </div>
+              ) : (
+                <div className="text-muted-foreground">
+                  {isSignUp ? 'Já tem uma conta?' : 'Não tem uma conta?'}{' '}
+                  <button
+                    type="button"
+                    className="text-primary hover:underline font-medium"
+                    onClick={() => setIsSignUp(!isSignUp)}
+                  >
+                    {isSignUp ? 'Entrar' : 'Cadastrar-se'}
+                  </button>
+                </div>
+              )}
             </div>
           </form>
         </CardContent>
