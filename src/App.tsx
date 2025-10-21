@@ -53,6 +53,7 @@ const AppContent = () => {
                   <Route path="/favoritos" element={<Favoritos />} />
                   <Route path="/adicionar-pet" element={<AdicionarPet />} />
                   <Route path="/configuracoes" element={<Settings />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>

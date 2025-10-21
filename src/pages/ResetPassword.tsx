@@ -16,17 +16,14 @@ export default function ResetPassword() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Verifica se há um hash de recuperação na URL
-    supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'PASSWORD_RECOVERY') {
         // Usuário chegou via link de recuperação
-      } else if (event === 'SIGNED_IN') {
-        // Redireciona após redefinir a senha
-        toast.success('Senha redefinida com sucesso!');
-        navigate('/');
       }
     });
-  }, [navigate]);
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
