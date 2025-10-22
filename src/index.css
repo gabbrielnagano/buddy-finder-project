@@ -42,6 +42,7 @@ All colors MUST be HSL.
     --gradient-primary: linear-gradient(135deg, hsl(211 100% 50%), hsl(211 100% 45%));
     --gradient-warm: linear-gradient(135deg, hsl(25 100% 67%), hsl(25 100% 62%));
     --gradient-hero: linear-gradient(135deg, hsl(211 100% 50%) 0%, hsl(25 100% 67%) 100%);
+    --gradient-recovery: linear-gradient(135deg, hsl(25 100% 67%) 0%, hsl(142 69% 58%) 100%);
     --gradient-subtle: linear-gradient(180deg, hsl(39 100% 97%) 0%, hsl(39 40% 93%) 100%);
 
     /* Shadows */
@@ -97,10 +98,11 @@ All colors MUST be HSL.
     --input: 20 14% 20%;
     --ring: 25 100% 65%;
 
-    /* Gradients para o modo escuro */
+    /* Gradientes para o modo escuro */
     --gradient-primary: linear-gradient(135deg, hsl(25 100% 65%), hsl(25 100% 60%));
     --gradient-warm: linear-gradient(135deg, hsl(25 100% 65%), hsl(25 80% 50%));
     --gradient-hero: linear-gradient(135deg, hsl(25 100% 65%) 0%, hsl(142 69% 55%) 100%);
+    --gradient-recovery: linear-gradient(135deg, hsl(25 100% 65%) 0%, hsl(142 69% 55%) 100%);
     --gradient-subtle: linear-gradient(180deg, hsl(20 14% 8%) 0%, hsl(20 14% 12%) 100%);
 
     /* Shadows para o modo escuro */
