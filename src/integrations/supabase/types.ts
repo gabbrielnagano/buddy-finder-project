@@ -14,7 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      pets: {
+        Row: {
+          breed: string
+          created_at: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          is_available: boolean | null
+          name: string
+          owner_id: string
+          size: string
+          tags: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          breed: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_available?: boolean | null
+          name: string
+          owner_id: string
+          size: string
+          tags?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          breed?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_available?: boolean | null
+          name?: string
+          owner_id?: string
+          size?: string
+          tags?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
