@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Filter, MapPin, Sliders } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -146,6 +147,8 @@ export default function BuscarPets() {
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+  const [pets, setPets] = useState<Pet[]>(mockPets);
+  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     species: "todas",
     breed: "",
@@ -160,7 +163,51 @@ export default function BuscarPets() {
     specialNeeds: false
   });
 
-  const filteredPets = mockPets.filter(pet => {
+  // Carregar pets do banco de dados
+  useEffect(() => {
+    loadPets();
+  }, []);
+
+  const loadPets = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('pets')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      if (data) {
+        const formattedPets: Pet[] = data.map(pet => ({
+          id: pet.id,
+          name: pet.name,
+          image: pet.image_url || mockPets[0].image,
+          species: pet.species as "cachorro" | "gato",
+          breed: pet.breed || 'SRD',
+          age: pet.age || 'adulto',
+          size: pet.size as "pequeno" | "medio" | "grande",
+          gender: pet.gender as "macho" | "femea",
+          location: pet.location || 'Brasil',
+          description: pet.description || '',
+          vaccinated: pet.vaccinated,
+          castrated: pet.castrated,
+          docile: pet.docile,
+          active: pet.active,
+          specialNeeds: pet.special_needs,
+        }));
+        
+        // Combinar com pets mockados
+        setPets([...formattedPets, ...mockPets]);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar pets:', error);
+      setPets(mockPets);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredPets = pets.filter(pet => {
     const matchesSearch = pet.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          pet.breed.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          pet.location.toLowerCase().includes(searchTerm.toLowerCase());
@@ -403,7 +450,7 @@ export default function BuscarPets() {
           </h2>
           {filteredPets.length > 0 && (
             <Badge variant="secondary" className="text-sm">
-              {filteredPets.length} {t('search.of')} {mockPets.length} pets
+              {filteredPets.length} {t('search.of')} {pets.length} pets
             </Badge>
           )}
         </div>

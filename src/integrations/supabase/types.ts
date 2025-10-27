@@ -14,45 +14,392 @@ export type Database = {
   }
   public: {
     Tables: {
-      pets: {
+      adocao: {
         Row: {
-          breed: string
+          data_solicitacao: string | null
+          id_adocao: number
+          id_pet: number | null
+          id_usuario: number | null
+          status: string | null
+        }
+        Insert: {
+          data_solicitacao?: string | null
+          id_adocao?: number
+          id_pet?: number | null
+          id_usuario?: number | null
+          status?: string | null
+        }
+        Update: {
+          data_solicitacao?: string | null
+          id_adocao?: number
+          id_pet?: number | null
+          id_usuario?: number | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "adocao_id_pet_fkey"
+            columns: ["id_pet"]
+            isOneToOne: false
+            referencedRelation: "pet"
+            referencedColumns: ["id_pet"]
+          },
+          {
+            foreignKeyName: "adocao_id_usuario_fkey"
+            columns: ["id_usuario"]
+            isOneToOne: false
+            referencedRelation: "usuario"
+            referencedColumns: ["id_usuario"]
+          },
+        ]
+      }
+      card: {
+        Row: {
+          comentarios: number | null
+          compartilhamentos: number | null
+          curtidas: number | null
+          data_atualizacao: string | null
+          data_criacao: string | null
+          destaque: boolean | null
+          id_card: number
+          id_pet: number
+          imagem_url: string | null
+          localizacao: string | null
+          tags: string | null
+          visualizacoes: number | null
+        }
+        Insert: {
+          comentarios?: number | null
+          compartilhamentos?: number | null
+          curtidas?: number | null
+          data_atualizacao?: string | null
+          data_criacao?: string | null
+          destaque?: boolean | null
+          id_card?: number
+          id_pet: number
+          imagem_url?: string | null
+          localizacao?: string | null
+          tags?: string | null
+          visualizacoes?: number | null
+        }
+        Update: {
+          comentarios?: number | null
+          compartilhamentos?: number | null
+          curtidas?: number | null
+          data_atualizacao?: string | null
+          data_criacao?: string | null
+          destaque?: boolean | null
+          id_card?: number
+          id_pet?: number
+          imagem_url?: string | null
+          localizacao?: string | null
+          tags?: string | null
+          visualizacoes?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_id_pet_fkey"
+            columns: ["id_pet"]
+            isOneToOne: false
+            referencedRelation: "pet"
+            referencedColumns: ["id_pet"]
+          },
+        ]
+      }
+      comentarios: {
+        Row: {
+          comentario: string
           created_at: string | null
-          description: string | null
           id: string
-          image_url: string | null
-          is_available: boolean | null
-          name: string
-          owner_id: string
-          size: string
-          tags: string[] | null
+          pet_id: string
+          usuario_id: string
+        }
+        Insert: {
+          comentario: string
+          created_at?: string | null
+          id?: string
+          pet_id: string
+          usuario_id: string
+        }
+        Update: {
+          comentario?: string
+          created_at?: string | null
+          id?: string
+          pet_id?: string
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comentarios_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      favoritos: {
+        Row: {
+          created_at: string | null
+          id: string
+          pet_id: string
+          usuario_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          pet_id: string
+          usuario_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          pet_id?: string
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favoritos_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      instituicao: {
+        Row: {
+          cidade: string | null
+          cnpj: string | null
+          email: string | null
+          endereco: string | null
+          estado: string | null
+          id_instituicao: number
+          nome: string
+          telefone: string | null
+        }
+        Insert: {
+          cidade?: string | null
+          cnpj?: string | null
+          email?: string | null
+          endereco?: string | null
+          estado?: string | null
+          id_instituicao?: number
+          nome: string
+          telefone?: string | null
+        }
+        Update: {
+          cidade?: string | null
+          cnpj?: string | null
+          email?: string | null
+          endereco?: string | null
+          estado?: string | null
+          id_instituicao?: number
+          nome?: string
+          telefone?: string | null
+        }
+        Relationships: []
+      }
+      mensagens: {
+        Row: {
+          created_at: string | null
+          destinatario_id: string
+          id: string
+          lida: boolean | null
+          mensagem: string
+          pet_id: string | null
+          remetente_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          destinatario_id: string
+          id?: string
+          lida?: boolean | null
+          mensagem: string
+          pet_id?: string | null
+          remetente_id: string
+        }
+        Update: {
+          created_at?: string | null
+          destinatario_id?: string
+          id?: string
+          lida?: boolean | null
+          mensagem?: string
+          pet_id?: string | null
+          remetente_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mensagens_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      perfis: {
+        Row: {
+          avatar_url: string | null
+          cidade: string | null
+          created_at: string | null
+          estado: string | null
+          id: string
+          nome: string | null
+          telefone: string | null
           updated_at: string | null
         }
         Insert: {
-          breed: string
+          avatar_url?: string | null
+          cidade?: string | null
           created_at?: string | null
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          is_available?: boolean | null
-          name: string
-          owner_id: string
-          size: string
-          tags?: string[] | null
+          estado?: string | null
+          id: string
+          nome?: string | null
+          telefone?: string | null
           updated_at?: string | null
         }
         Update: {
-          breed?: string
+          avatar_url?: string | null
+          cidade?: string | null
+          created_at?: string | null
+          estado?: string | null
+          id?: string
+          nome?: string | null
+          telefone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      pet: {
+        Row: {
+          descricao: string | null
+          especie: string | null
+          id_instituicao: number | null
+          id_pet: number
+          id_usuario: number | null
+          idade: number | null
+          nome: string
+          porte: string | null
+        }
+        Insert: {
+          descricao?: string | null
+          especie?: string | null
+          id_instituicao?: number | null
+          id_pet?: number
+          id_usuario?: number | null
+          idade?: number | null
+          nome: string
+          porte?: string | null
+        }
+        Update: {
+          descricao?: string | null
+          especie?: string | null
+          id_instituicao?: number | null
+          id_pet?: number
+          id_usuario?: number | null
+          idade?: number | null
+          nome?: string
+          porte?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pet_id_instituicao_fkey"
+            columns: ["id_instituicao"]
+            isOneToOne: false
+            referencedRelation: "instituicao"
+            referencedColumns: ["id_instituicao"]
+          },
+          {
+            foreignKeyName: "pet_id_usuario_fkey"
+            columns: ["id_usuario"]
+            isOneToOne: false
+            referencedRelation: "usuario"
+            referencedColumns: ["id_usuario"]
+          },
+        ]
+      }
+      pets: {
+        Row: {
+          active: boolean | null
+          age: string | null
+          breed: string | null
+          castrated: boolean | null
+          created_at: string | null
+          description: string | null
+          docile: boolean | null
+          gender: string | null
+          id: string
+          image_url: string | null
+          location: string | null
+          name: string
+          size: string | null
+          special_needs: boolean | null
+          species: string
+          updated_at: string | null
+          user_id: string
+          vaccinated: boolean | null
+        }
+        Insert: {
+          active?: boolean | null
+          age?: string | null
+          breed?: string | null
+          castrated?: boolean | null
           created_at?: string | null
           description?: string | null
+          docile?: boolean | null
+          gender?: string | null
           id?: string
           image_url?: string | null
-          is_available?: boolean | null
-          name?: string
-          owner_id?: string
-          size?: string
-          tags?: string[] | null
+          location?: string | null
+          name: string
+          size?: string | null
+          special_needs?: boolean | null
+          species: string
           updated_at?: string | null
+          user_id: string
+          vaccinated?: boolean | null
+        }
+        Update: {
+          active?: boolean | null
+          age?: string | null
+          breed?: string | null
+          castrated?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          docile?: boolean | null
+          gender?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          name?: string
+          size?: string | null
+          special_needs?: boolean | null
+          species?: string
+          updated_at?: string | null
+          user_id?: string
+          vaccinated?: boolean | null
+        }
+        Relationships: []
+      }
+      usuario: {
+        Row: {
+          email: string
+          id_usuario: number
+          nome: string
+          senha: string
+        }
+        Insert: {
+          email: string
+          id_usuario?: number
+          nome: string
+          senha: string
+        }
+        Update: {
+          email?: string
+          id_usuario?: number
+          nome?: string
+          senha?: string
         }
         Relationships: []
       }

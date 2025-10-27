@@ -140,20 +140,25 @@ export default function AdicionarPet() {
         imageUrl = urlData.publicUrl;
       }
 
-      // Salvar dados do pet no banco
+      // Mapear tags para características booleanas
       const petData: Database['public']['Tables']['pets']['Insert'] = {
         name: formData.name,
+        species: 'cachorro', // Você pode adicionar um campo para selecionar isso no formulário
         breed: formData.breed,
-        size: formData.size as 'pequeno' | 'medio' | 'grande',
+        size: formData.size,
         description: formData.description || null,
-        tags: formData.tags,
         image_url: imageUrl,
-        owner_id: user?.id || '',
+        user_id: user?.id || '',
+        vaccinated: formData.tags.includes('Vacinado'),
+        castrated: formData.tags.includes('Castrado'),
+        docile: formData.tags.includes('Dócil'),
+        active: formData.tags.includes('Ativo') || formData.tags.includes('Brincalhão'),
+        special_needs: formData.tags.includes('Necessita cuidados especiais'),
       };
 
       const { data, error } = await supabase
         .from('pets')
-        .insert(petData as any)
+        .insert(petData)
         .select();
 
       if (error) throw error;

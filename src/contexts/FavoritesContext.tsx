@@ -1,4 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface Pet {
   id: string;
@@ -20,50 +22,151 @@ interface Pet {
 
 interface FavoritesContextType {
   favorites: Pet[];
-  addToFavorites: (pet: Pet) => void;
-  removeFromFavorites: (petId: string) => void;
+  addToFavorites: (pet: Pet) => Promise<void>;
+  removeFromFavorites: (petId: string) => Promise<void>;
   isFavorite: (petId: string) => boolean;
-  toggleFavorite: (pet: Pet) => void;
+  toggleFavorite: (pet: Pet) => Promise<void>;
+  loading: boolean;
 }
 
 const FavoritesContext = createContext<FavoritesContextType | undefined>(undefined);
 
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [favorites, setFavorites] = useState<Pet[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  // Carregar favoritos do localStorage na inicialização
+  // Carregar favoritos do banco de dados
   useEffect(() => {
-    const savedFavorites = localStorage.getItem('pet-favorites');
-    if (savedFavorites) {
-      setFavorites(JSON.parse(savedFavorites));
-    }
+    loadFavorites();
   }, []);
 
-  // Salvar favoritos no localStorage sempre que a lista mudar
-  useEffect(() => {
-    localStorage.setItem('pet-favorites', JSON.stringify(favorites));
-  }, [favorites]);
+  const loadFavorites = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setLoading(false);
+        return;
+      }
 
-  const addToFavorites = (pet: Pet) => {
-    setFavorites(prev => {
-      if (prev.find(p => p.id === pet.id)) return prev;
-      return [...prev, pet];
-    });
+      const { data: favoritosData, error } = await supabase
+        .from('favoritos')
+        .select('pet_id')
+        .eq('usuario_id', user.id);
+
+      if (error) throw error;
+
+      if (favoritosData && favoritosData.length > 0) {
+        const petIds = favoritosData.map(f => f.pet_id);
+        const { data: petsData, error: petsError } = await supabase
+          .from('pets')
+          .select('*')
+          .in('id', petIds);
+
+        if (petsError) throw petsError;
+
+        const formattedPets: Pet[] = (petsData || []).map(pet => ({
+          id: pet.id,
+          name: pet.name,
+          image: pet.image_url || '',
+          species: pet.species as "cachorro" | "gato",
+          breed: pet.breed || '',
+          age: pet.age || '',
+          size: pet.size as "pequeno" | "medio" | "grande",
+          gender: pet.gender as "macho" | "femea",
+          location: pet.location || '',
+          description: pet.description || '',
+          vaccinated: pet.vaccinated,
+          castrated: pet.castrated,
+          docile: pet.docile,
+          active: pet.active,
+          specialNeeds: pet.special_needs,
+        }));
+
+        setFavorites(formattedPets);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar favoritos:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const removeFromFavorites = (petId: string) => {
-    setFavorites(prev => prev.filter(p => p.id !== petId));
+  const addToFavorites = async (pet: Pet) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Erro",
+          description: "Você precisa estar logado para adicionar favoritos",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const { error } = await supabase
+        .from('favoritos')
+        .insert({ usuario_id: user.id, pet_id: pet.id });
+
+      if (error) throw error;
+
+      setFavorites(prev => {
+        if (prev.find(p => p.id === pet.id)) return prev;
+        return [...prev, pet];
+      });
+
+      toast({
+        title: "Sucesso",
+        description: "Pet adicionado aos favoritos",
+      });
+    } catch (error: any) {
+      console.error('Erro ao adicionar favorito:', error);
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao adicionar favorito",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const removeFromFavorites = async (petId: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { error } = await supabase
+        .from('favoritos')
+        .delete()
+        .eq('usuario_id', user.id)
+        .eq('pet_id', petId);
+
+      if (error) throw error;
+
+      setFavorites(prev => prev.filter(p => p.id !== petId));
+
+      toast({
+        title: "Sucesso",
+        description: "Pet removido dos favoritos",
+      });
+    } catch (error: any) {
+      console.error('Erro ao remover favorito:', error);
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao remover favorito",
+        variant: "destructive",
+      });
+    }
   };
 
   const isFavorite = (petId: string) => {
     return favorites.some(p => p.id === petId);
   };
 
-  const toggleFavorite = (pet: Pet) => {
+  const toggleFavorite = async (pet: Pet) => {
     if (isFavorite(pet.id)) {
-      removeFromFavorites(pet.id);
+      await removeFromFavorites(pet.id);
     } else {
-      addToFavorites(pet);
+      await addToFavorites(pet);
     }
   };
 
@@ -73,7 +176,8 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
       addToFavorites,
       removeFromFavorites,
       isFavorite,
-      toggleFavorite
+      toggleFavorite,
+      loading
     }}>
       {children}
     </FavoritesContext.Provider>
