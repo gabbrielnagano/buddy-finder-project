@@ -17,6 +17,10 @@ import type { Database } from "@/integrations/supabase/types";
 interface PetFormData {
   name: string;
   breed: string;
+  species: string;
+  age: string;
+  gender: string;
+  location: string;
   size: string;
   description: string;
   tags: string[];
@@ -47,6 +51,22 @@ const SIZES = [
   { value: "grande", label: "Grande" }
 ];
 
+const SPECIES = [
+  { value: "cachorro", label: "🐕 Cachorro" },
+  { value: "gato", label: "🐱 Gato" }
+];
+
+const AGES = [
+  { value: "filhote", label: "Filhote" },
+  { value: "adulto", label: "Adulto" },
+  { value: "idoso", label: "Idoso" }
+];
+
+const GENDERS = [
+  { value: "macho", label: "Macho" },
+  { value: "femea", label: "Fêmea" }
+];
+
 export default function AdicionarPet() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -57,6 +77,10 @@ export default function AdicionarPet() {
   const [formData, setFormData] = useState<PetFormData>({
     name: "",
     breed: "",
+    species: "",
+    age: "",
+    gender: "",
+    location: "",
     size: "",
     description: "",
     tags: [],
@@ -105,7 +129,7 @@ export default function AdicionarPet() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name || !formData.breed || !formData.size) {
+    if (!formData.name || !formData.breed || !formData.species || !formData.age || !formData.gender || !formData.location || !formData.size) {
       toast({
         title: "Erro",
         description: "Por favor, preencha todos os campos obrigatórios.",
@@ -143,8 +167,11 @@ export default function AdicionarPet() {
       // Mapear tags para características booleanas
       const petData: Database['public']['Tables']['pets']['Insert'] = {
         name: formData.name,
-        species: 'cachorro', // Você pode adicionar um campo para selecionar isso no formulário
+        species: formData.species,
         breed: formData.breed,
+        age: formData.age,
+        gender: formData.gender,
+        location: formData.location,
         size: formData.size,
         description: formData.description || null,
         image_url: imageUrl,
@@ -253,6 +280,25 @@ export default function AdicionarPet() {
                 />
               </div>
 
+              {/* Espécie */}
+              <div className="space-y-2">
+                <Label htmlFor="species">Espécie *</Label>
+                <Select value={formData.species} onValueChange={(value) => handleInputChange("species", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione a espécie" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SPECIES.map((species) => (
+                      <SelectItem key={species.value} value={species.value}>
+                        {species.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Raça */}
               <div className="space-y-2">
                 <Label htmlFor="breed">Raça *</Label>
@@ -261,6 +307,54 @@ export default function AdicionarPet() {
                   placeholder="Ex: Golden Retriever, SRD, Persa..."
                   value={formData.breed}
                   onChange={(e) => handleInputChange("breed", e.target.value)}
+                  required
+                />
+              </div>
+
+              {/* Idade */}
+              <div className="space-y-2">
+                <Label htmlFor="age">Idade *</Label>
+                <Select value={formData.age} onValueChange={(value) => handleInputChange("age", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione a idade" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {AGES.map((age) => (
+                      <SelectItem key={age.value} value={age.value}>
+                        {age.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Gênero */}
+              <div className="space-y-2">
+                <Label htmlFor="gender">Gênero *</Label>
+                <Select value={formData.gender} onValueChange={(value) => handleInputChange("gender", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o gênero" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {GENDERS.map((gender) => (
+                      <SelectItem key={gender.value} value={gender.value}>
+                        {gender.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Localização */}
+              <div className="space-y-2">
+                <Label htmlFor="location">Localização *</Label>
+                <Input
+                  id="location"
+                  placeholder="Ex: São Paulo - SP"
+                  value={formData.location}
+                  onChange={(e) => handleInputChange("location", e.target.value)}
                   required
                 />
               </div>
