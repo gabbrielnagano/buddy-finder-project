@@ -37,8 +37,8 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
 
   const isLiked = isFavorite(pet.id);
 
-  const handleLike = () => {
-    toggleFavorite(pet);
+  const handleLike = async () => {
+    await toggleFavorite(pet);
     setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
   };
 
