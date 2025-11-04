@@ -13,6 +13,7 @@ import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import type { Database } from "@/integrations/supabase/types";
+import { geocodeAddress } from "@/lib/geocoding";
 
 interface PetFormData {
   name: string;
@@ -142,6 +143,17 @@ export default function AdicionarPet() {
     
     try {
       let imageUrl = null;
+      let latitude: number | null = null;
+      let longitude: number | null = null;
+      
+      // Geocodificar o endereço
+      if (formData.location) {
+        const geoResult = await geocodeAddress(formData.location);
+        if (geoResult) {
+          latitude = geoResult.latitude;
+          longitude = geoResult.longitude;
+        }
+      }
       
       // Upload da imagem se existir
       if (formData.image) {
@@ -176,6 +188,8 @@ export default function AdicionarPet() {
         description: formData.description || null,
         image_url: imageUrl,
         user_id: user?.id || '',
+        latitude,
+        longitude,
         vaccinated: formData.tags.includes('Vacinado'),
         castrated: formData.tags.includes('Castrado'),
         docile: formData.tags.includes('Dócil'),

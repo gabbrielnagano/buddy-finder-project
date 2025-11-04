@@ -23,6 +23,7 @@ interface Pet {
   docile: boolean;
   active: boolean;
   specialNeeds: boolean;
+  distance?: number;
 }
 
 interface PetSearchCardProps {
@@ -109,7 +110,13 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
               {getAgeLabel(pet.age)}
             </Badge>
           </div>
-          <div className="absolute bottom-3 right-3">
+          <div className="absolute bottom-3 right-3 flex gap-2">
+            {pet.distance && (
+              <Badge variant="default" className="text-xs bg-primary text-primary-foreground flex items-center gap-1">
+                <MapPin className="h-3 w-3" />
+                {pet.distance.toFixed(1)} km
+              </Badge>
+            )}
             <Badge variant="outline" className="text-xs bg-card border-border text-card-foreground flex items-center gap-1">
               <MapPin className="h-3 w-3" />
               {pet.location}

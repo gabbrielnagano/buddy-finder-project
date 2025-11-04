@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
-import { Search, Filter, MapPin, Sliders } from "lucide-react";
+import { Search, Filter, MapPin, Sliders, Navigation } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentLocation, calculateDistance } from "@/lib/geocoding";
+import { toast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,6 +38,9 @@ interface Pet {
   docile: boolean;
   active: boolean;
   specialNeeds: boolean;
+  latitude?: number | null;
+  longitude?: number | null;
+  distance?: number;
 }
 
 const mockPets: Pet[] = [
@@ -149,6 +154,7 @@ export default function BuscarPets() {
   const [showFilters, setShowFilters] = useState(false);
   const [pets, setPets] = useState<Pet[]>(mockPets);
   const [loading, setLoading] = useState(true);
+  const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [filters, setFilters] = useState({
     species: "todas",
     breed: "",
@@ -160,13 +166,25 @@ export default function BuscarPets() {
     castrated: false,
     docile: false,
     active: false,
-    specialNeeds: false
+    specialNeeds: false,
+    maxDistance: 0 // 0 = sem filtro de distância
   });
+
+  // Obter localização do usuário
+  useEffect(() => {
+    const getUserLocation = async () => {
+      const location = await getCurrentLocation();
+      if (location) {
+        setUserLocation(location);
+      }
+    };
+    getUserLocation();
+  }, []);
 
   // Carregar pets do banco de dados
   useEffect(() => {
     loadPets();
-  }, []);
+  }, [userLocation]);
 
   const loadPets = async () => {
     try {
@@ -178,23 +196,40 @@ export default function BuscarPets() {
       if (error) throw error;
 
       if (data) {
-        const formattedPets: Pet[] = data.map(pet => ({
-          id: pet.id,
-          name: pet.name,
-          image: pet.image_url || mockPets[0].image,
-          species: pet.species as "cachorro" | "gato",
-          breed: pet.breed || 'SRD',
-          age: pet.age || 'adulto',
-          size: pet.size as "pequeno" | "medio" | "grande",
-          gender: pet.gender as "macho" | "femea",
-          location: pet.location || 'Brasil',
-          description: pet.description || '',
-          vaccinated: pet.vaccinated,
-          castrated: pet.castrated,
-          docile: pet.docile,
-          active: pet.active,
-          specialNeeds: pet.special_needs,
-        }));
+        const formattedPets: Pet[] = data.map(pet => {
+          let distance: number | undefined;
+          
+          // Calcular distância se ambas as localizações existirem
+          if (userLocation && pet.latitude && pet.longitude) {
+            distance = calculateDistance(
+              userLocation.latitude,
+              userLocation.longitude,
+              pet.latitude,
+              pet.longitude
+            );
+          }
+          
+          return {
+            id: pet.id,
+            name: pet.name,
+            image: pet.image_url || mockPets[0].image,
+            species: pet.species as "cachorro" | "gato",
+            breed: pet.breed || 'SRD',
+            age: pet.age || 'adulto',
+            size: pet.size as "pequeno" | "medio" | "grande",
+            gender: pet.gender as "macho" | "femea",
+            location: pet.location || 'Brasil',
+            description: pet.description || '',
+            vaccinated: pet.vaccinated,
+            castrated: pet.castrated,
+            docile: pet.docile,
+            active: pet.active,
+            specialNeeds: pet.special_needs,
+            latitude: pet.latitude,
+            longitude: pet.longitude,
+            distance,
+          };
+        });
         
         // Combinar com pets mockados
         setPets([...formattedPets, ...mockPets]);
@@ -224,10 +259,16 @@ export default function BuscarPets() {
     const matchesDocile = !filters.docile || pet.docile === filters.docile;
     const matchesActive = !filters.active || pet.active === filters.active;
     const matchesSpecialNeeds = !filters.specialNeeds || pet.specialNeeds === filters.specialNeeds;
+    
+    // Filtrar por distância se o filtro estiver ativo
+    const matchesDistance = !filters.maxDistance || 
+                           !pet.distance || 
+                           pet.distance <= filters.maxDistance;
 
     return matchesSearch && matchesSpecies && matchesBreed && matchesAge && 
            matchesSize && matchesGender && matchesLocation && matchesVaccinated && 
-           matchesCastrated && matchesDocile && matchesActive && matchesSpecialNeeds;
+           matchesCastrated && matchesDocile && matchesActive && matchesSpecialNeeds &&
+           matchesDistance;
   });
 
   const clearFilters = () => {
@@ -242,8 +283,26 @@ export default function BuscarPets() {
       castrated: false,
       docile: false,
       active: false,
-      specialNeeds: false
+      specialNeeds: false,
+      maxDistance: 0
     });
+  };
+
+  const handleGetLocation = async () => {
+    const location = await getCurrentLocation();
+    if (location) {
+      setUserLocation(location);
+      toast({
+        title: "Localização obtida!",
+        description: "Agora você pode filtrar pets por proximidade.",
+      });
+    } else {
+      toast({
+        title: "Erro",
+        description: "Não foi possível obter sua localização.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -383,11 +442,51 @@ export default function BuscarPets() {
                       onChange={(e) => setFilters({...filters, location: e.target.value})}
                       className="pl-10"
                     />
-                  </div>
-                </div>
-              </div>
+                   </div>
+                 </div>
+               </div>
 
-              <Separator />
+               <Separator />
+
+               {/* Proximity Filter */}
+               <div>
+                 <Label className="text-sm font-medium mb-3 block">Filtrar por Proximidade</Label>
+                 <div className="flex items-center gap-4">
+                   <Button 
+                     type="button" 
+                     variant="outline" 
+                     onClick={handleGetLocation}
+                     className="flex items-center gap-2"
+                   >
+                     <Navigation className="h-4 w-4" />
+                     {userLocation ? "Atualizar Localização" : "Obter Minha Localização"}
+                   </Button>
+                   {userLocation && (
+                     <div className="flex-1">
+                       <Label htmlFor="maxDistance" className="text-sm mb-2 block">
+                         Distância máxima: {filters.maxDistance > 0 ? `${filters.maxDistance} km` : "Sem limite"}
+                       </Label>
+                       <div className="flex items-center gap-2">
+                         <input
+                           id="maxDistance"
+                           type="range"
+                           min="0"
+                           max="100"
+                           step="5"
+                           value={filters.maxDistance}
+                           onChange={(e) => setFilters({...filters, maxDistance: parseInt(e.target.value)})}
+                           className="flex-1"
+                         />
+                         <span className="text-sm text-muted-foreground w-16 text-right">
+                           {filters.maxDistance > 0 ? `${filters.maxDistance} km` : "Todos"}
+                         </span>
+                       </div>
+                     </div>
+                   )}
+                 </div>
+               </div>
+
+               <Separator />
 
               {/* Characteristics */}
               <div>
