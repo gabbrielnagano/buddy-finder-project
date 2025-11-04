@@ -331,7 +331,9 @@ export type Database = {
           gender: string | null
           id: string
           image_url: string | null
+          latitude: number | null
           location: string | null
+          longitude: number | null
           name: string
           size: string | null
           special_needs: boolean | null
@@ -351,7 +353,9 @@ export type Database = {
           gender?: string | null
           id?: string
           image_url?: string | null
+          latitude?: number | null
           location?: string | null
+          longitude?: number | null
           name: string
           size?: string | null
           special_needs?: boolean | null
@@ -371,7 +375,9 @@ export type Database = {
           gender?: string | null
           id?: string
           image_url?: string | null
+          latitude?: number | null
           location?: string | null
+          longitude?: number | null
           name?: string
           size?: string | null
           special_needs?: boolean | null
