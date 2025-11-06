@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import type { Database } from "@/integrations/supabase/types";
 import { geocodeAddress } from "@/lib/geocoding";
+import { ImageCropDialog } from "@/components/ImageCropDialog";
 
 interface PetFormData {
   name: string;
@@ -74,6 +75,9 @@ export default function AdicionarPet() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [customTag, setCustomTag] = useState("");
+  const [imageSrc, setImageSrc] = useState<string>("");
+  const [showCropDialog, setShowCropDialog] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string>("");
   
   const [formData, setFormData] = useState<PetFormData>({
     name: "",
@@ -97,11 +101,22 @@ export default function AdicionarPet() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setFormData(prev => ({
-        ...prev,
-        image: file
-      }));
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImageSrc(reader.result as string);
+        setShowCropDialog(true);
+      };
+      reader.readAsDataURL(file);
     }
+  };
+
+  const handleCropComplete = (croppedImageBlob: Blob) => {
+    const croppedFile = new File([croppedImageBlob], `pet-${Date.now()}.jpg`, { type: "image/jpeg" });
+    setFormData(prev => ({
+      ...prev,
+      image: croppedFile
+    }));
+    setImagePreview(URL.createObjectURL(croppedImageBlob));
   };
 
   const addTag = (tag: string) => {
@@ -267,19 +282,30 @@ export default function AdicionarPet() {
                   onChange={handleImageChange}
                   className="hidden"
                 />
-                <Label htmlFor="image" className="cursor-pointer">
-                  <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                  <p className="text-sm text-muted-foreground">
-                    Clique para adicionar uma foto do pet
-                  </p>
-                  {formData.image && (
-                    <p className="text-sm text-primary mt-2">
-                      {formData.image.name}
+                {imagePreview ? (
+                  <div className="space-y-4">
+                    <img src={imagePreview} alt="Preview" className="mx-auto max-h-48 rounded-lg" />
+                    <Label htmlFor="image" className="cursor-pointer text-sm text-primary hover:underline">
+                      Alterar foto
+                    </Label>
+                  </div>
+                ) : (
+                  <Label htmlFor="image" className="cursor-pointer">
+                    <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                    <p className="text-sm text-muted-foreground">
+                      Clique para adicionar uma foto do pet
                     </p>
-                  )}
-                </Label>
+                  </Label>
+                )}
               </div>
             </div>
+
+            <ImageCropDialog
+              open={showCropDialog}
+              imageSrc={imageSrc}
+              onClose={() => setShowCropDialog(false)}
+              onComplete={handleCropComplete}
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Nome */}
