@@ -56,7 +56,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signUp = async (email: string, password: string) => {
-    const redirectUrl = `${window.location.origin}/`;
+    // Usar localhost:3000 para desenvolvimento
+    const redirectUrl = window.location.hostname === 'localhost' 
+      ? 'http://localhost:3000/'
+      : `${window.location.origin}/`;
     
     const { error } = await supabase.auth.signUp({
       email,
@@ -73,7 +76,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const resetPassword = async (email: string) => {
-    const redirectUrl = `${window.location.origin}/reset-password`;
+    // Usar localhost:3000 para desenvolvimento
+    const redirectUrl = window.location.hostname === 'localhost'
+      ? 'http://localhost:3000/reset-password'
+      : `${window.location.origin}/reset-password`;
     
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: redirectUrl,
