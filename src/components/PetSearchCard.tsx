@@ -35,12 +35,24 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
   const { t } = useTranslation();
   const [likeCount, setLikeCount] = useState(Math.floor(Math.random() * 50) + 5);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
 
   const isLiked = isFavorite(pet.id);
 
-  const handleLike = async () => {
+  const handleLike = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // Previne o click de abrir o modal
     await toggleFavorite(pet);
     setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
+  };
+
+  const handleSave = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Previne o click de abrir o modal
+    setIsSaved(!isSaved);
+  };
+
+  const handleShare = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Previne o click de abrir o modal
+    // Implementar funcionalidade de compartilhar
   };
 
   const getSizeLabel = (size: string) => {
@@ -193,7 +205,8 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
             <div className="flex items-center gap-1">
               <Button
                 variant="ghost"
-                size="sm" 
+                size="sm"
+                onClick={handleShare}
                 className="text-muted-foreground hover-scale"
               >
                 <Share2 className="h-4 w-4" />
@@ -202,10 +215,10 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={handleLike}
-                className={`hover-scale ${isLiked ? 'text-primary' : 'text-muted-foreground'}`}
+                onClick={handleSave}
+                className={`hover-scale ${isSaved ? 'text-primary' : 'text-muted-foreground'}`}
               >
-                <Bookmark className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
+                <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} />
               </Button>
             </div>
           </div>

@@ -1,122 +1,73 @@
+import { useState, useEffect } from "react";
 import { Heart, Search, Shield, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PetSearchCard } from "@/components/PetSearchCard";
+import { supabase } from "@/integrations/supabase/client";
 
-// Import pet images
-import goldenRetrieverImg from "@/assets/pets/golden-retriever.jpg";
-import orangeCatImg from "@/assets/pets/orange-cat.jpg";
-import huskyPuppyImg from "@/assets/pets/husky-puppy.jpg";
-import tuxedoCatImg from "@/assets/pets/tuxedo-cat.jpg";
-import beagleMixImg from "@/assets/pets/beagle-mix.jpg";
-import persianCatImg from "@/assets/pets/persian-cat.jpg";
-
-const mockPets = [
-  {
-    id: "1",
-    name: "Luna",
-    image: goldenRetrieverImg,
-    species: "cachorro" as const,
-    breed: "Golden Retriever",
-    age: "adulto",
-    size: "grande" as const,
-    gender: "femea" as const,
-    location: "São Paulo, SP",
-    description: "Luna é uma cadela carinhosa e muito inteligente. Ama brincar no parque e é ótima com crianças.",
-    vaccinated: true,
-    castrated: true,
-    docile: true,
-    active: true,
-    specialNeeds: false
-  },
-  {
-    id: "2", 
-    name: "Milo",
-    image: orangeCatImg,
-    species: "gato" as const,
-    breed: "SRD (Sem Raça Definida)",
-    age: "filhote",
-    size: "pequeno" as const,
-    gender: "macho" as const,
-    location: "Rio de Janeiro, RJ",
-    description: "Milo é um gatinho brincalhão e cheio de energia. Adora carinho e ronrona muito alto.",
-    vaccinated: true,
-    castrated: false,
-    docile: true,
-    active: true,
-    specialNeeds: false
-  },
-  {
-    id: "3",
-    name: "Zeus",
-    image: huskyPuppyImg,
-    species: "cachorro" as const,
-    breed: "Husky Siberiano",
-    age: "filhote",
-    size: "medio" as const,
-    gender: "macho" as const,
-    location: "Belo Horizonte, MG",
-    description: "Zeus é um filhote muito ativo e precisa de bastante exercício. Perfeito para famílias ativas.",
-    vaccinated: true,
-    castrated: false,
-    docile: true,
-    active: true,
-    specialNeeds: false
-  },
-  {
-    id: "4",
-    name: "Nina",
-    image: tuxedoCatImg,
-    species: "gato" as const,
-    breed: "SRD (Sem Raça Definida)",
-    age: "adulto",
-    size: "pequeno" as const,
-    gender: "femea" as const,
-    location: "Porto Alegre, RS",
-    description: "Nina é uma gata tranquila e independente. Ideal para apartamentos e pessoas mais calmas.",
-    vaccinated: true,
-    castrated: true,
-    docile: true,
-    active: false,
-    specialNeeds: false
-  },
-  {
-    id: "5",
-    name: "Buddy",
-    image: beagleMixImg,
-    species: "cachorro" as const,
-    breed: "Beagle Mix",
-    age: "adulto",
-    size: "medio" as const,
-    gender: "macho" as const,
-    location: "Brasília, DF",
-    description: "Buddy é um cão muito leal e companheiro. Adora longas caminhadas e é muito obediente.",
-    vaccinated: true,
-    castrated: true,
-    docile: true,
-    active: true,
-    specialNeeds: false
-  },
-  {
-    id: "6",
-    name: "Princesa",
-    image: persianCatImg,
-    species: "gato" as const,
-    breed: "Persa",
-    age: "idoso",
-    size: "pequeno" as const,
-    gender: "femea" as const,
-    location: "Salvador, BA",
-    description: "Princesa é uma gata sênior muito carinhosa. Procura um lar tranquilo para seus anos dourados.",
-    vaccinated: true,
-    castrated: true,
-    docile: true,
-    active: false,
-    specialNeeds: true
-  }
-];
+interface Pet {
+  id: string;
+  name: string;
+  image: string;
+  species: "cachorro" | "gato";
+  breed: string;
+  age: string;
+  size: "pequeno" | "medio" | "grande";
+  gender: "macho" | "femea";
+  location: string;
+  description: string;
+  vaccinated: boolean;
+  castrated: boolean;
+  docile: boolean;
+  active: boolean;
+  specialNeeds: boolean;
+}
 
 const Index = () => {
+  const [pets, setPets] = useState<Pet[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Carregar pets do banco de dados
+  useEffect(() => {
+    loadPets();
+  }, []);
+
+  const loadPets = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('pets')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      if (data) {
+        const formattedPets: Pet[] = data.map(pet => ({
+          id: pet.id,
+          name: pet.name,
+          image: pet.image_url,
+          species: pet.species as "cachorro" | "gato",
+          breed: pet.breed || 'SRD',
+          age: pet.age || 'adulto',
+          size: pet.size as "pequeno" | "medio" | "grande",
+          gender: pet.gender as "macho" | "femea",
+          location: pet.location || 'Brasil',
+          description: pet.description || '',
+          vaccinated: pet.vaccinated,
+          castrated: pet.castrated,
+          docile: pet.docile,
+          active: pet.active,
+          specialNeeds: pet.special_needs,
+        }));
+        
+        setPets(formattedPets);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar pets:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-subtle">
       {/* Hero Section */}
@@ -156,17 +107,27 @@ const Index = () => {
             </Button>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {mockPets.map((pet, index) => (
-              <div 
-                key={pet.id} 
-                className="animate-fade-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <PetSearchCard pet={pet} />
-              </div>
-            ))}
-          </div>
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Carregando pets...</p>
+            </div>
+          ) : pets.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Nenhum pet disponível no momento.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {pets.map((pet, index) => (
+                <div 
+                  key={pet.id} 
+                  className="animate-fade-in"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <PetSearchCard pet={pet} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

@@ -14,14 +14,6 @@ import { Separator } from "@/components/ui/separator";
 import { PetSearchCard } from "@/components/PetSearchCard";
 import { useTranslation } from "react-i18next";
 
-// Import pet images
-import goldenRetrieverImg from "@/assets/pets/golden-retriever.jpg";
-import orangeCatImg from "@/assets/pets/orange-cat.jpg";
-import huskyPuppyImg from "@/assets/pets/husky-puppy.jpg";
-import tuxedoCatImg from "@/assets/pets/tuxedo-cat.jpg";
-import beagleMixImg from "@/assets/pets/beagle-mix.jpg";
-import persianCatImg from "@/assets/pets/persian-cat.jpg";
-
 interface Pet {
   id: string;
   name: string;
@@ -43,116 +35,11 @@ interface Pet {
   distance?: number;
 }
 
-const mockPets: Pet[] = [
-  {
-    id: "1",
-    name: "Luna",
-    image: goldenRetrieverImg,
-    species: "cachorro",
-    breed: "Golden Retriever",
-    age: "adulto",
-    size: "grande",
-    gender: "femea",
-    location: "São Paulo, SP",
-    description: "Luna é uma cadela carinhosa e muito inteligente. Ama brincar no parque e é ótima com crianças.",
-    vaccinated: true,
-    castrated: true,
-    docile: true,
-    active: true,
-    specialNeeds: false
-  },
-  {
-    id: "2", 
-    name: "Milo",
-    image: orangeCatImg,
-    species: "gato",
-    breed: "SRD (Sem Raça Definida)",
-    age: "filhote",
-    size: "pequeno",
-    gender: "macho",
-    location: "Rio de Janeiro, RJ",
-    description: "Milo é um gatinho brincalhão e cheio de energia. Adora carinho e ronrona muito alto.",
-    vaccinated: true,
-    castrated: false,
-    docile: true,
-    active: true,
-    specialNeeds: false
-  },
-  {
-    id: "3",
-    name: "Zeus",
-    image: huskyPuppyImg,
-    species: "cachorro",
-    breed: "Husky Siberiano",
-    age: "filhote",
-    size: "medio",
-    gender: "macho",
-    location: "Belo Horizonte, MG",
-    description: "Zeus é um filhote muito ativo e precisa de bastante exercício. Perfeito para famílias ativas.",
-    vaccinated: true,
-    castrated: false,
-    docile: true,
-    active: true,
-    specialNeeds: false
-  },
-  {
-    id: "4",
-    name: "Nina",
-    image: tuxedoCatImg,
-    species: "gato",
-    breed: "SRD (Sem Raça Definida)",
-    age: "adulto",
-    size: "pequeno",
-    gender: "femea",
-    location: "Porto Alegre, RS",
-    description: "Nina é uma gata tranquila e independente. Ideal para apartamentos e pessoas mais calmas.",
-    vaccinated: true,
-    castrated: true,
-    docile: true,
-    active: false,
-    specialNeeds: false
-  },
-  {
-    id: "5",
-    name: "Buddy",
-    image: beagleMixImg,
-    species: "cachorro",
-    breed: "Beagle Mix",
-    age: "adulto",
-    size: "medio",
-    gender: "macho",
-    location: "Brasília, DF",
-    description: "Buddy é um cão muito leal e companheiro. Adora longas caminhadas e é muito obediente.",
-    vaccinated: true,
-    castrated: true,
-    docile: true,
-    active: true,
-    specialNeeds: false
-  },
-  {
-    id: "6",
-    name: "Princesa",
-    image: persianCatImg,
-    species: "gato",
-    breed: "Persa",
-    age: "idoso",
-    size: "pequeno",
-    gender: "femea",
-    location: "Salvador, BA",
-    description: "Princesa é uma gata sênior muito carinhosa. Procura um lar tranquilo para seus anos dourados.",
-    vaccinated: true,
-    castrated: true,
-    docile: true,
-    active: false,
-    specialNeeds: true
-  }
-];
-
 export default function BuscarPets() {
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
-  const [pets, setPets] = useState<Pet[]>(mockPets);
+  const [pets, setPets] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
   const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [filters, setFilters] = useState({
@@ -212,7 +99,7 @@ export default function BuscarPets() {
           return {
             id: pet.id,
             name: pet.name,
-            image: pet.image_url || mockPets[0].image,
+            image: pet.image_url,
             species: pet.species as "cachorro" | "gato",
             breed: pet.breed || 'SRD',
             age: pet.age || 'adulto',
@@ -231,12 +118,10 @@ export default function BuscarPets() {
           };
         });
         
-        // Combinar com pets mockados
-        setPets([...formattedPets, ...mockPets]);
+        setPets(formattedPets);
       }
     } catch (error) {
       console.error('Erro ao carregar pets:', error);
-      setPets(mockPets);
     } finally {
       setLoading(false);
     }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Heart, Share2, Bookmark, MapPin, Calendar, Users, Shield, Activity, Star, Send } from "lucide-react";
 import {
   Dialog,
@@ -13,6 +13,9 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/hooks/use-toast";
 
 interface Pet {
   id: string;
@@ -34,33 +37,33 @@ interface Pet {
 
 interface Comment {
   id: string;
-  user: string;
-  avatar: string;
+  user_name: string;
+  user_avatar: string | null;
   comment: string;
-  timestamp: string;
+  created_at: string;
 }
 
 const mockComments: Comment[] = [
   {
     id: "1",
-    user: "Maria Silva",
-    avatar: "/avatars/maria.jpg",
+    user_name: "Maria Silva",
+    user_avatar: "/avatars/maria.jpg",
     comment: "Que fofinho! Parece ser muito carinhoso ❤️",
-    timestamp: "há 2 horas"
+    created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
   },
   {
     id: "2", 
-    user: "João Santos",
-    avatar: "/avatars/joao.jpg",
+    user_name: "João Santos",
+    user_avatar: "/avatars/joao.jpg",
     comment: "Já adotei um pet através desta plataforma. Recomendo!",
-    timestamp: "há 5 horas"
+    created_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString()
   },
   {
     id: "3",
-    user: "Ana Costa",
-    avatar: "/avatars/ana.jpg", 
+    user_name: "Ana Costa",
+    user_avatar: "/avatars/ana.jpg", 
     comment: "Gostaria de saber mais informações sobre a adoção.",
-    timestamp: "há 1 dia"
+    created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
   }
 ];
 
@@ -71,12 +74,51 @@ interface PetDetailsDialogProps {
 }
 
 export function PetDetailsDialog({ pet, open, onOpenChange }: PetDetailsDialogProps) {
+  const { user } = useAuth();
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [newComment, setNewComment] = useState("");
-  const [comments, setComments] = useState(mockComments);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [loadingComments, setLoadingComments] = useState(false);
 
-  if (!pet) return null;
+  // Carregar comentários quando o dialog abrir
+  useEffect(() => {
+    if (open && pet) {
+      loadComments();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, pet?.id]);
+
+  const loadComments = async () => {
+    if (!pet) return;
+    
+    setLoadingComments(true);
+    try {
+      const { data, error } = await supabase
+        .from('comentarios')
+        .select('*')
+        .eq('pet_id', pet.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      if (data) {
+        // Mapear dados do banco para o formato esperado
+        const formattedComments: Comment[] = data.map(c => ({
+          id: c.id,
+          user_name: 'Usuário', // TODO: Buscar nome do usuário
+          user_avatar: null,
+          comment: c.comentario,
+          created_at: c.created_at || new Date().toISOString()
+        }));
+        setComments(formattedComments);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar comentários:', error);
+    } finally {
+      setLoadingComments(false);
+    }
+  };
 
   const handleShare = () => {
     if (navigator.share) {
@@ -91,27 +133,74 @@ export function PetDetailsDialog({ pet, open, onOpenChange }: PetDetailsDialogPr
     }
   };
 
-  const handleAddComment = () => {
-    if (newComment.trim()) {
-      const comment: Comment = {
-        id: Date.now().toString(),
-        user: "Você",
-        avatar: "/avatars/default.jpg",
-        comment: newComment,
-        timestamp: "agora"
-      };
-      setComments([comment, ...comments]);
-      setNewComment("");
+  const handleAddComment = async () => {
+    if (!newComment.trim() || !pet) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('comentarios')
+        .insert([
+          {
+            pet_id: pet.id,
+            usuario_id: user?.id || 'anonymous',
+            comentario: newComment.trim()
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        // Adicionar o comentário à lista local
+        const newCommentObj: Comment = {
+          id: data.id,
+          user_name: user?.user_metadata?.name || 'Você',
+          user_avatar: null,
+          comment: data.comentario,
+          created_at: data.created_at || new Date().toISOString()
+        };
+        setComments([newCommentObj, ...comments]);
+        setNewComment("");
+        toast({
+          title: "Comentário adicionado!",
+          description: "Seu comentário foi publicado com sucesso.",
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao adicionar comentário:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível adicionar o comentário.",
+        variant: "destructive",
+      });
     }
   };
 
+  const formatTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMs = now.getTime() - date.getTime();
+    const diffInMinutes = Math.floor(diffInMs / 60000);
+    const diffInHours = Math.floor(diffInMs / 3600000);
+    const diffInDays = Math.floor(diffInMs / 86400000);
+
+    if (diffInMinutes < 1) return "agora";
+    if (diffInMinutes < 60) return `há ${diffInMinutes} minuto${diffInMinutes > 1 ? 's' : ''}`;
+    if (diffInHours < 24) return `há ${diffInHours} hora${diffInHours > 1 ? 's' : ''}`;
+    if (diffInDays < 7) return `há ${diffInDays} dia${diffInDays > 1 ? 's' : ''}`;
+    return date.toLocaleDateString('pt-BR');
+  };
+
   const getSpeciesIcon = () => {
-    return pet.species === "cachorro" ? "🐕" : "🐱";
+    return pet?.species === "cachorro" ? "🐕" : "🐱";
   };
 
   const getGenderIcon = () => {
-    return pet.gender === "macho" ? "♂️" : "♀️";
+    return pet?.gender === "macho" ? "♂️" : "♀️";
   };
+
+  if (!pet) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -227,13 +316,13 @@ export function PetDetailsDialog({ pet, open, onOpenChange }: PetDetailsDialogPr
                     {comments.map((comment) => (
                       <div key={comment.id} className="flex gap-3">
                         <Avatar className="h-8 w-8">
-                          <AvatarImage src={comment.avatar} alt={comment.user} />
-                          <AvatarFallback>{comment.user.charAt(0)}</AvatarFallback>
+                          <AvatarImage src={comment.user_avatar || undefined} alt={comment.user_name} />
+                          <AvatarFallback>{comment.user_name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="text-sm font-medium">{comment.user}</span>
-                            <span className="text-xs text-muted-foreground">{comment.timestamp}</span>
+                            <span className="text-sm font-medium">{comment.user_name}</span>
+                            <span className="text-xs text-muted-foreground">{formatTimeAgo(comment.created_at)}</span>
                           </div>
                           <p className="text-sm text-muted-foreground">{comment.comment}</p>
                         </div>
