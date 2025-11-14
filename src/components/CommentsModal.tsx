@@ -10,9 +10,9 @@ import { Send, MessageCircle } from 'lucide-react';
 
 interface Comment {
   id: string;
-  comment: string;
+  comentario: string;
   created_at: string;
-  user_id: string;
+  usuario_id: string;
 }
 
 interface CommentsModalProps {
@@ -61,11 +61,11 @@ export function CommentsModal({
                   <div key={comment.id} className="flex gap-3">
                     <Avatar className="h-8 w-8">
                       <AvatarFallback className="text-xs">
-                        {comment.user_id.slice(0, 2).toUpperCase()}
+                        {comment.usuario_id?.slice(0, 2).toUpperCase() || 'U'}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
-                      <p className="text-sm text-foreground">{comment.comment}</p>
+                      <p className="text-sm text-foreground">{comment.comentario}</p>
                       <p className="text-xs text-muted-foreground mt-1">
                         {formatDistanceToNow(new Date(comment.created_at), {
                           addSuffix: true,
