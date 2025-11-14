@@ -17,6 +17,7 @@ import Settings from "./pages/Settings";
 import AdicionarPet from "./pages/AdicionarPet";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
+import PetDetails from "./pages/PetDetails";
 import { useEffect, useState } from "react";
 
 const queryClient = new QueryClient();
@@ -118,6 +119,8 @@ const AppRoutes = () => {
       
       {/* Rota especial de reset password */}
       <Route path="/reset-password" element={<ResetPassword />} />
+      {/* Página pública de detalhes do pet para links compartilhados */
+      <Route path="/pet/:id" element={<PetDetails />} />
       
       {/* Rotas protegidas */}
       <Route 
