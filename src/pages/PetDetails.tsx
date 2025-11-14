@@ -57,12 +57,39 @@ const PetDetails = () => {
     } as any;
   }, [petRecord]);
 
-  // SEO básico
+  // SEO básico + Open Graph para compartilhamento
   useEffect(() => {
     const title = petRecord?.name
       ? `${petRecord.name} – Adote um Pet`
       : "Pet – BuddyFinder";
     document.title = title;
+
+    // Limpar meta tags antigas
+    const existingMetaTags = document.querySelectorAll('meta[property^="og:"], meta[name="twitter:"], meta[name="description"]');
+    existingMetaTags.forEach(tag => tag.remove());
+
+    // Meta tags Open Graph para Facebook/WhatsApp
+    const metaTags = [
+      { property: 'og:title', content: title },
+      { property: 'og:description', content: petRecord?.description || `Conheça ${petRecord?.name}, ${petRecord?.breed} disponível para adoção!` },
+      { property: 'og:image', content: petRecord?.image_url || '' },
+      { property: 'og:url', content: window.location.href },
+      { property: 'og:type', content: 'website' },
+      { property: 'og:site_name', content: 'BuddyFinder' },
+      { name: 'description', content: petRecord?.description || `Conheça ${petRecord?.name}, ${petRecord?.breed} disponível para adoção!` },
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: title },
+      { name: 'twitter:description', content: petRecord?.description || `Conheça ${petRecord?.name}, ${petRecord?.breed} disponível para adoção!` },
+      { name: 'twitter:image', content: petRecord?.image_url || '' }
+    ];
+
+    metaTags.forEach(({ property, name, content }) => {
+      const meta = document.createElement('meta');
+      if (property) meta.setAttribute('property', property);
+      if (name) meta.setAttribute('name', name);
+      meta.setAttribute('content', content);
+      document.head.appendChild(meta);
+    });
 
     // canonical
     const linkEl = document.querySelector('link[rel="canonical"]') as
@@ -81,26 +108,28 @@ const PetDetails = () => {
 
   if (loading) {
     return (
-      <main className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" />
+      <main className="min-h-screen flex items-center justify-center bg-orange-gradient">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-white" />
       </main>
     );
   }
 
   if (!petRecord) {
     return (
-      <main className="min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-3">
-          <h1 className="text-2xl font-semibold">Pet não encontrado</h1>
-          <p className="text-muted-foreground">Este anúncio pode ter sido removido.</p>
-          <Link to="/" className="underline text-primary">Voltar para a página inicial</Link>
+      <main className="min-h-screen flex items-center justify-center bg-orange-gradient">
+        <div className="text-center space-y-3 bg-white/90 backdrop-blur-sm rounded-2xl p-8 mx-4 shadow-lg">
+          <h1 className="text-2xl font-semibold text-gray-900">Pet não encontrado</h1>
+          <p className="text-gray-600">Este anúncio pode ter sido removido.</p>
+          <Link to="/" className="underline text-primary font-medium hover:text-primary/80 transition-colors">
+            Voltar para a página inicial
+          </Link>
         </div>
       </main>
     );
   }
 
   return (
-    <main>
+    <main className="min-h-screen bg-orange-gradient">
       {/* H1 oculto para SEO */}
       <h1 className="sr-only">{petRecord.name} para adoção</h1>
       <PetDetailsDialog

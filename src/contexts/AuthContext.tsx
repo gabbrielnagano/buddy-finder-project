@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signUp = async (email: string, password: string) => {
-    // Usar localhost:3000 para desenvolvimento
+    // Usar localhost:3000 para desenvolvimento (porta configurada no Vite)
     const redirectUrl = window.location.hostname === 'localhost' 
       ? 'http://localhost:3000/'
       : `${window.location.origin}/`;
@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const resetPassword = async (email: string) => {
-    // Usar localhost:3000 para desenvolvimento
+    // Usar localhost:3000 para desenvolvimento (porta configurada no Vite)
     const redirectUrl = window.location.hostname === 'localhost'
       ? 'http://localhost:3000/reset-password'
       : `${window.location.origin}/reset-password`;

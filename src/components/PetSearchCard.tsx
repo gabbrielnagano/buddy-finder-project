@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PetPopup } from "./PetPopup";
 import { CommentsModal } from "./CommentsModal";
+import { ShareModal } from "./ShareModal";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
@@ -42,6 +43,7 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
   const [comments, setComments] = useState<any[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [loadingComments, setLoadingComments] = useState(false);
 
@@ -153,53 +155,7 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
 
   const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    
-    // Gera o link único do pet
-    const petUrl = `${window.location.origin}/pet/${pet.id}`;
-    const description = pet.description ? pet.description.slice(0, 100) : '';
-    const shareData = {
-      title: `${pet.name} - Adote um Pet`,
-      text: `Conheça ${pet.name}, ${pet.breed} disponível para adoção!${description ? ' ' + description + '...' : ''}`,
-      url: petUrl
-    };
-
-    try {
-      // Tenta usar a Web Share API (funciona em mobile)
-      if (navigator.share) {
-        await navigator.share(shareData);
-        toast({
-          title: "Compartilhado com sucesso!"
-        });
-      } else {
-        // Fallback: copia o link para a área de transferência
-        await navigator.clipboard.writeText(petUrl);
-        toast({
-          title: "Link copiado!",
-          description: "O link foi copiado para a área de transferência"
-        });
-      }
-    } catch (error) {
-      // Ignora AbortError (usuário cancelou o compartilhamento)
-      if ((error as Error).name === 'AbortError') {
-        return;
-      }
-      
-      // Para outros erros, tenta copiar diretamente
-      try {
-        await navigator.clipboard.writeText(petUrl);
-        toast({
-          title: "Link copiado!",
-          description: "O link foi copiado para a área de transferência"
-        });
-      } catch (clipboardError) {
-        console.error('Error sharing:', error);
-        toast({
-          title: "Link do pet",
-          description: petUrl,
-          duration: 5000
-        });
-      }
-    }
+    setIsShareOpen(true);
   };
 
   const getSizeLabel = (size: string) => {
@@ -252,6 +208,13 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
         comments={comments}
         onAddComment={handleAddComment}
         loading={loadingComments}
+      />
+      <ShareModal
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        url={`${window.location.origin}/pet/${pet.id}`}
+        title={`${pet.name} - Adote um Pet`}
+        text={`Conheça ${pet.name}, ${pet.breed} disponível para adoção!${pet.description ? ' ' + pet.description.slice(0, 100) + '...' : ''}`}
       />
       <Card className="overflow-hidden hover:shadow-soft transition-all duration-300 animate-fade-in group">
         <div className="relative cursor-pointer" onClick={() => setIsDialogOpen(true)}>
