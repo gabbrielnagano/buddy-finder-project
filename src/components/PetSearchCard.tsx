@@ -156,9 +156,10 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
     
     // Gera o link único do pet
     const petUrl = `${window.location.origin}/pet/${pet.id}`;
+    const description = pet.description ? pet.description.slice(0, 100) : '';
     const shareData = {
       title: `${pet.name} - Adote um Pet`,
-      text: `Conheça ${pet.name}, ${pet.breed} disponível para adoção! ${pet.description.slice(0, 100)}...`,
+      text: `Conheça ${pet.name}, ${pet.breed} disponível para adoção!${description ? ' ' + description + '...' : ''}`,
       url: petUrl
     };
 
@@ -178,11 +179,24 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
         });
       }
     } catch (error) {
-      if ((error as Error).name !== 'AbortError') {
+      // Ignora AbortError (usuário cancelou o compartilhamento)
+      if ((error as Error).name === 'AbortError') {
+        return;
+      }
+      
+      // Para outros erros, tenta copiar diretamente
+      try {
+        await navigator.clipboard.writeText(petUrl);
+        toast({
+          title: "Link copiado!",
+          description: "O link foi copiado para a área de transferência"
+        });
+      } catch (clipboardError) {
         console.error('Error sharing:', error);
         toast({
-          title: "Erro ao compartilhar",
-          variant: "destructive"
+          title: "Link do pet",
+          description: petUrl,
+          duration: 5000
         });
       }
     }
