@@ -151,9 +151,41 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
     setIsSaved(!isSaved);
   };
 
-  const handleShare = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Previne o click de abrir o modal
-    // Implementar funcionalidade de compartilhar
+  const handleShare = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    // Gera o link único do pet
+    const petUrl = `${window.location.origin}/pet/${pet.id}`;
+    const shareData = {
+      title: `${pet.name} - Adote um Pet`,
+      text: `Conheça ${pet.name}, ${pet.breed} disponível para adoção! ${pet.description.slice(0, 100)}...`,
+      url: petUrl
+    };
+
+    try {
+      // Tenta usar a Web Share API (funciona em mobile)
+      if (navigator.share) {
+        await navigator.share(shareData);
+        toast({
+          title: "Compartilhado com sucesso!"
+        });
+      } else {
+        // Fallback: copia o link para a área de transferência
+        await navigator.clipboard.writeText(petUrl);
+        toast({
+          title: "Link copiado!",
+          description: "O link foi copiado para a área de transferência"
+        });
+      }
+    } catch (error) {
+      if ((error as Error).name !== 'AbortError') {
+        console.error('Error sharing:', error);
+        toast({
+          title: "Erro ao compartilhar",
+          variant: "destructive"
+        });
+      }
+    }
   };
 
   const getSizeLabel = (size: string) => {
