@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Heart, MessageCircle, Share2, Bookmark, Eye, MapPin, Calendar, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PetPopup } from "./PetPopup";
+import { CommentsModal } from "./CommentsModal";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useTranslation } from "react-i18next";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface Pet {
   id: string;
@@ -33,16 +36,114 @@ interface PetSearchCardProps {
 export function PetSearchCard({ pet }: PetSearchCardProps) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const { t } = useTranslation();
-  const [likeCount, setLikeCount] = useState(Math.floor(Math.random() * 50) + 5);
+  const { toast } = useToast();
+  const [likeCount, setLikeCount] = useState(0);
+  const [commentCount, setCommentCount] = useState(0);
+  const [comments, setComments] = useState<any[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [loadingComments, setLoadingComments] = useState(false);
 
   const isLiked = isFavorite(pet.id);
 
+  // Fetch real counts from database
+  useEffect(() => {
+    fetchCounts();
+  }, [pet.id]);
+
+  const fetchCounts = async () => {
+    try {
+      // Get favorites count
+      const { count: favCount } = await supabase
+        .from('favoritos')
+        .select('*', { count: 'exact', head: true })
+        .eq('pet_id', pet.id);
+
+      setLikeCount(favCount || 0);
+
+      // Get comments count
+      const { count: commCount } = await supabase
+        .from('comentarios')
+        .select('*', { count: 'exact', head: true })
+        .eq('pet_id', pet.id);
+
+      setCommentCount(commCount || 0);
+    } catch (error) {
+      console.error('Error fetching counts:', error);
+    }
+  };
+
+  const fetchComments = async () => {
+    setLoadingComments(true);
+    try {
+      const { data, error } = await supabase
+        .from('comentarios')
+        .select('*')
+        .eq('pet_id', pet.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setComments(data || []);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+      toast({
+        title: "Erro ao carregar comentários",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingComments(false);
+    }
+  };
+
   const handleLike = async (e: React.MouseEvent) => {
-    e.stopPropagation(); // Previne o click de abrir o modal
+    e.stopPropagation();
     await toggleFavorite(pet);
-    setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
+    // Refetch to get updated count
+    await fetchCounts();
+  };
+
+  const handleCommentClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    await fetchComments();
+    setIsCommentsOpen(true);
+  };
+
+  const handleAddComment = async (comment: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Você precisa estar logado para comentar",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const { error } = await supabase
+        .from('comentarios')
+        .insert({
+          pet_id: pet.id,
+          usuario_id: user.id,
+          comentario: comment
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Comentário adicionado com sucesso!"
+      });
+
+      // Refetch comments and counts
+      await fetchComments();
+      await fetchCounts();
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      toast({
+        title: "Erro ao adicionar comentário",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleSave = (e: React.MouseEvent) => {
@@ -97,6 +198,14 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
         pet={pet}
         open={isDialogOpen} 
         onClose={() => setIsDialogOpen(false)}
+      />
+      <CommentsModal
+        isOpen={isCommentsOpen}
+        onClose={() => setIsCommentsOpen(false)}
+        petName={pet.name}
+        comments={comments}
+        onAddComment={handleAddComment}
+        loading={loadingComments}
       />
       <Card className="overflow-hidden hover:shadow-soft transition-all duration-300 animate-fade-in group">
         <div className="relative cursor-pointer" onClick={() => setIsDialogOpen(true)}>
@@ -195,10 +304,11 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
               <Button
                 variant="ghost" 
                 size="sm"
+                onClick={handleCommentClick}
                 className="text-muted-foreground hover-scale"
               >
                 <MessageCircle className="h-4 w-4 mr-1" />
-                <span className="text-sm">{Math.floor(Math.random() * 15) + 1}</span>
+                <span className="text-sm">{commentCount}</span>
               </Button>
             </div>
             
