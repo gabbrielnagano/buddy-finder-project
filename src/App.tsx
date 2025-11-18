@@ -119,7 +119,8 @@ const AppRoutes = () => {
       
       {/* Rota especial de reset password */}
       <Route path="/reset-password" element={<ResetPassword />} />
-      {/* Página pública de detalhes do pet para links compartilhados */
+      
+      {/* Página pública de detalhes do pet para links compartilhados */}
       <Route path="/pet/:id" element={<PetDetails />} />
       
       {/* Rotas protegidas */}
@@ -155,6 +156,8 @@ const AppRoutes = () => {
           </ProtectedRoute>
         } 
       />
+      
+      /
       <Route 
         path="/configuracoes" 
         element={
