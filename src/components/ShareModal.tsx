@@ -64,7 +64,20 @@ Veja mais detalhes: ${url}
 
 #AdocaoResponsavel #AmorIncondicional`;
         
-        window.open(`https://wa.me/?text=${encodeURIComponent(whatsText)}`, '_blank');
+        // Usar whatsapp:// para melhor compatibilidade mobile
+        const whatsappUrl = `whatsapp://send?text=${encodeURIComponent(whatsText)}`;
+        const webWhatsappUrl = `https://web.whatsapp.com/send?text=${encodeURIComponent(whatsText)}`;
+        
+        // Tentar abrir o app nativo primeiro, depois fallback para web
+        const link = document.createElement('a');
+        link.href = whatsappUrl;
+        link.target = '_blank';
+        link.click();
+        
+        // Fallback para web WhatsApp se o app não abrir em 2 segundos
+        setTimeout(() => {
+          window.open(webWhatsappUrl, '_blank');
+        }, 2000);
       }
     }
   ];
