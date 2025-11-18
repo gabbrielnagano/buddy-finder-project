@@ -15,6 +15,7 @@ import {
 import buddyfinderLogo from "@/assets/buddyfinder-logo.png";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
+import { UserProfileSidebar } from "./UserProfileSidebar";
 
 export function AppSidebar() {
   const { state } = useSidebar();
@@ -38,6 +39,8 @@ export function AppSidebar() {
           )}
         </div>
       </SidebarHeader>
+
+      <UserProfileSidebar />
 
       <SidebarContent className="px-2">
         <SidebarGroup>
