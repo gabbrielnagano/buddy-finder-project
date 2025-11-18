@@ -34,17 +34,11 @@ export function ShareModal({ isOpen, onClose, url, title, text }: ShareModalProp
       icon: '📘',
       color: 'bg-[#1877F2] hover:bg-[#166FE5]',
       action: (url, title, text) => {
-        // Criar mensagem completa para Facebook
-        const fbMessage = `🐾 ${title}
+        // Abrir diretamente o diálogo de criar post do Facebook com o link do pet
+        const shareText = `🐾 ${title}\n\n${text}`;
+        const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(shareText)}`;
 
-${text}
-
-
-
-${url}`;
-
-        setFacebookMessage(fbMessage);
-        setShowFacebookModal(true);
+        window.open(facebookShareUrl, '_blank', 'noopener');
       }
     },
     {
