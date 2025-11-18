@@ -89,7 +89,7 @@ export function UserProfileSidebar() {
     <div className="px-4 py-3 border-b border-border bg-muted/30">
       <div 
         className="flex items-center gap-3 cursor-pointer hover:bg-accent/50 rounded-lg p-2 -m-2 transition-colors"
-        onClick={() => navigate('/configuracoes')}
+        onClick={() => navigate('/perfil')}
       >
         <Avatar className="h-12 w-12 border-2 border-primary/20">
           <AvatarImage src={profile?.avatar_url || undefined} />
