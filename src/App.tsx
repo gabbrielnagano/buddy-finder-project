@@ -18,6 +18,7 @@ import AdicionarPet from "./pages/AdicionarPet";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 import PetDetails from "./pages/PetDetails";
+import UserProfile from "./pages/UserProfile";
 import { useEffect, useState } from "react";
 
 const queryClient = new QueryClient();
@@ -157,7 +158,24 @@ const AppRoutes = () => {
         } 
       />
       
-      /
+      <Route 
+        path="/perfil" 
+        element={
+          <ProtectedRoute>
+            <UserProfile />
+          </ProtectedRoute>
+        } 
+      />
+
+      <Route 
+        path="/perfil/:userId" 
+        element={
+          <ProtectedRoute>
+            <UserProfile />
+          </ProtectedRoute>
+        } 
+      />
+      
       <Route 
         path="/configuracoes" 
         element={
