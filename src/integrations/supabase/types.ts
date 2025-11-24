@@ -241,6 +241,7 @@ export type Database = {
       perfis: {
         Row: {
           avatar_url: string | null
+          bio: string | null
           cidade: string | null
           created_at: string | null
           estado: string | null
@@ -251,6 +252,7 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
           cidade?: string | null
           created_at?: string | null
           estado?: string | null
@@ -261,6 +263,7 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
           cidade?: string | null
           created_at?: string | null
           estado?: string | null
