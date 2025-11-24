@@ -78,7 +78,6 @@ export default function UserProfile() {
         .from('pets')
         .select('*')
         .eq('user_id', targetUserId)
-        .eq('active', true)
         .order('created_at', { ascending: false });
 
       if (petsData) {
