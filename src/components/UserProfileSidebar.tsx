@@ -88,10 +88,12 @@ export function UserProfileSidebar() {
   return (
     <div className="px-4 py-3 border-b border-border bg-muted/30">
       <div 
-        className="flex items-center gap-3 cursor-pointer hover:bg-accent/50 rounded-lg p-2 -m-2 transition-colors"
+        className={`flex items-center gap-3 cursor-pointer hover:bg-accent/50 rounded-lg p-2 transition-colors ${
+          state === "collapsed" ? "justify-center" : ""
+        }`}
         onClick={() => navigate('/perfil')}
       >
-        <Avatar className="h-12 w-12 border-2 border-primary/20">
+        <Avatar className="h-10 w-10 border-2 border-primary/20 flex-shrink-0">
           <AvatarImage src={profile?.avatar_url || undefined} />
           <AvatarFallback className="bg-primary/10 text-primary font-semibold">
             {initials}
