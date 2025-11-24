@@ -19,6 +19,7 @@ import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 import PetDetails from "./pages/PetDetails";
 import UserProfile from "./pages/UserProfile";
+import EditProfile from "./pages/EditProfile";
 import { useEffect, useState } from "react";
 
 const queryClient = new QueryClient();
@@ -163,6 +164,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <UserProfile />
+          </ProtectedRoute>
+        } 
+      />
+
+      <Route 
+        path="/perfil/editar" 
+        element={
+          <ProtectedRoute>
+            <EditProfile />
           </ProtectedRoute>
         } 
       />

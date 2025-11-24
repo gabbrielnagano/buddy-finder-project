@@ -149,7 +149,7 @@ export default function UserProfile() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => navigate('/configuracoes')}
+                      onClick={() => navigate('/perfil/editar')}
                     >
                       <Settings className="h-4 w-4 mr-2" />
                       Editar Perfil
