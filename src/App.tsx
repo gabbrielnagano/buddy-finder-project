@@ -135,7 +135,7 @@ const AppRoutes = () => {
         } 
       />
       <Route 
-        path="/buscar" 
+        path="/buscar-pets" 
         element={
           <ProtectedRoute>
             <BuscarPets />
