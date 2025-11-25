@@ -341,18 +341,6 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
               </Button>
             </div>
           </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-2 mt-4 pt-4 border-t">
-            <Button variant="outline" className="flex-1" size="sm" onClick={() => setIsDialogOpen(true)}>
-              <Eye className="h-4 w-4 mr-2" />
-              {t('pet.viewMore')}
-            </Button>
-            <Button className="flex-1" size="sm">
-              <Heart className="h-4 w-4 mr-2" />
-              {t('pet.wantToAdopt')}
-            </Button>
-          </div>
         </CardContent>
       </Card>
     </>
