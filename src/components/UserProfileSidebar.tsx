@@ -48,8 +48,8 @@ export function UserProfileSidebar() {
       const { count } = await supabase
         .from('pets')
         .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .eq('active', true);
+        .eq('user_id', user.id);
+
 
       setPetsCount(count || 0);
     } catch (error) {
