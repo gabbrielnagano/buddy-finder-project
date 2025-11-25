@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Heart, Search, Shield, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,6 +25,7 @@ interface Pet {
 }
 
 const Index = () => {
+  const navigate = useNavigate();
   const [pets, setPets] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -84,12 +86,9 @@ const Index = () => {
             e transforme duas vidas para sempre.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="hero" size="lg" className="px-8">
+            <Button variant="hero" size="lg" className="px-8" onClick={() => navigate('/buscar-pets')}>
               <Search className="mr-2 h-5 w-5" />
               Buscar Pets
-            </Button>
-            <Button variant="outline" size="lg" className="px-8">
-              Como Funciona
             </Button>
           </div>
         </div>
