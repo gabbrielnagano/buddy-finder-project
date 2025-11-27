@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSidebar } from "@/components/ui/sidebar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface UserProfile {
   nome: string;
@@ -19,15 +19,17 @@ export function UserProfileSidebar() {
   const { user } = useAuth();
   const { state } = useSidebar();
   const navigate = useNavigate();
+  const routeLocation = useLocation();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [petsCount, setPetsCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (user) {
+      setLoading(true);
       fetchUserData();
     }
-  }, [user]);
+  }, [user, routeLocation.pathname]);
 
   const fetchUserData = async () => {
     if (!user) return;
