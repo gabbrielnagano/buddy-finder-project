@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { MapPin, Mail, Phone, PawPrint, Settings, ArrowLeft } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -40,6 +40,7 @@ export default function UserProfile() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { userId } = useParams();
+  const routeLocation = useLocation();
   const { t } = useTranslation();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -49,8 +50,9 @@ export default function UserProfile() {
   const isOwnProfile = !userId || userId === user?.id;
 
   useEffect(() => {
+    setLoading(true);
     fetchProfileData();
-  }, [userId, user]);
+  }, [userId, user, routeLocation.key]);
 
   const fetchProfileData = async () => {
     const targetUserId = userId || user?.id;
