@@ -56,7 +56,7 @@ export function AppSidebar() {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild size="lg">
-                  <NavLink to="/buscar" className="flex items-center gap-3 hover:bg-accent/50 transition-colors">
+                  <NavLink to="/buscar-pets" className="flex items-center gap-3 hover:bg-accent/50 transition-colors">
                     <Search className="h-5 w-5 text-primary" />
                     {state !== "collapsed" && <span className="font-medium">{t('navigation.search')}</span>}
                   </NavLink>
