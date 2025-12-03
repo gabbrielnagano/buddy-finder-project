@@ -26,21 +26,26 @@ export function UserProfileSidebar() {
 
   useEffect(() => {
     if (user) {
-      setLoading(true);
       fetchUserData();
     }
   }, [user, routeLocation.pathname]);
 
   const fetchUserData = async () => {
     if (!user) return;
+    
+    setLoading(true);
 
     try {
       // Buscar perfil do usuário
-      const { data: profileData } = await supabase
+      const { data: profileData, error } = await supabase
         .from('perfis')
         .select('nome, avatar_url, cidade, estado')
         .eq('id', user.id)
         .single();
+
+      if (error) {
+        console.error('Erro ao buscar perfil:', error);
+      }
 
       if (profileData) {
         setProfile(profileData);
@@ -51,7 +56,6 @@ export function UserProfileSidebar() {
         .from('pets')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', user.id);
-
 
       setPetsCount(count || 0);
     } catch (error) {

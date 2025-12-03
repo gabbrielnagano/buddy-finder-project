@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { ImageCropDialog } from "@/components/ImageCropDialog";
@@ -39,7 +38,10 @@ export default function EditProfile() {
         .eq('id', user.id)
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erro ao buscar perfil:', error);
+        toast.error("Erro ao carregar perfil");
+      }
 
       if (data) {
         setNome(data.nome || "");
@@ -78,7 +80,7 @@ export default function EditProfile() {
       setSaving(true);
 
       // Upload da imagem para o Supabase Storage
-      const fileName = `${user.id}-${Date.now()}.jpg`;
+      const fileName = `avatar-${user.id}-${Date.now()}.jpg`;
       const { error: uploadError } = await supabase.storage
         .from('pet-images')
         .upload(fileName, croppedBlob, {
@@ -86,7 +88,10 @@ export default function EditProfile() {
           upsert: true
         });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Erro no upload:', uploadError);
+        throw uploadError;
+      }
 
       // Obter URL pública da imagem
       const { data: { publicUrl } } = supabase.storage
@@ -95,6 +100,7 @@ export default function EditProfile() {
 
       setAvatarUrl(publicUrl);
       toast.success("Foto atualizada!");
+      
     } catch (error) {
       console.error('Erro ao fazer upload:', error);
       toast.error("Erro ao atualizar foto");
@@ -114,22 +120,72 @@ export default function EditProfile() {
     try {
       setSaving(true);
 
-      const { error } = await supabase
+      const updateData = {
+        id: user.id,
+        nome: nome.trim(),
+        avatar_url: avatarUrl,
+        updated_at: new Date().toISOString()
+      };
+
+      console.log('Atualizando perfil com dados:', updateData);
+
+      // Tentar primeiro um UPDATE
+      const { data: existingProfile } = await supabase
         .from('perfis')
-        .update({
-          nome: nome.trim(),
-          bio: bio.trim(),
-          avatar_url: avatarUrl
-        })
-        .eq('id', user.id);
+        .select('id')
+        .eq('id', user.id)
+        .single();
 
-      if (error) throw error;
+      if (existingProfile) {
+        // Se o perfil existe, fazer UPDATE
+        const { error } = await supabase
+          .from('perfis')
+          .update({
+            nome: nome.trim(),
+            bio: bio.trim() || null,
+            avatar_url: avatarUrl,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', user.id);
 
+        if (error) {
+          console.error('Erro no UPDATE:', error);
+          throw error;
+        }
+      } else {
+        // Se não existe, fazer INSERT
+        const { error } = await supabase
+          .from('perfis')
+          .insert({
+            id: user.id,
+            nome: nome.trim(),
+            bio: bio.trim() || null,
+            avatar_url: avatarUrl,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          });
+
+        if (error) {
+          console.error('Erro no INSERT:', error);
+          throw error;
+        }
+      }
+
+      console.log('Perfil salvo com sucesso!');
       toast.success("Perfil atualizado com sucesso!");
-      navigate('/perfil');
+      
+      // Aguardar um pouco e depois navegar
+      setTimeout(() => {
+        navigate('/perfil', { replace: true });
+        // Forçar refresh da página após navegação
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+      }, 1000);
+      
     } catch (error) {
       console.error('Erro ao salvar perfil:', error);
-      toast.error("Erro ao salvar perfil");
+      toast.error("Erro ao salvar perfil: " + (error?.message || 'Erro desconhecido'));
     } finally {
       setSaving(false);
     }
@@ -206,21 +262,15 @@ export default function EditProfile() {
                   maxLength={100}
                 />
               </div>
-
               <div className="space-y-2">
                 <Label htmlFor="bio">Biografia</Label>
-                <Textarea
+                <Input
                   id="bio"
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
-                  placeholder="Conte um pouco sobre você..."
-                  rows={5}
-                  maxLength={500}
-                  className="resize-none"
+                  placeholder="Sua biografia"
+                  maxLength={255}
                 />
-                <p className="text-xs text-muted-foreground text-right">
-                  {bio.length}/500 caracteres
-                </p>
               </div>
             </div>
 

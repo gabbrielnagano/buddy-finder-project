@@ -10,6 +10,9 @@ import { LoginScreen } from "@/components/LoginScreen";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import "@/i18n";
+import { useEffect, useState, Suspense, lazy } from "react";
+
+// Imports regulares
 import Index from "./pages/Index";
 import BuscarPets from "./pages/BuscarPets";
 import Favoritos from "./pages/Favoritos";
@@ -17,10 +20,12 @@ import Settings from "./pages/Settings";
 import AdicionarPet from "./pages/AdicionarPet";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
-import PetDetails from "./pages/PetDetails";
 import UserProfile from "./pages/UserProfile";
-import EditProfile from "./pages/EditProfile";
-import { useEffect, useState } from "react";
+import Help from "./pages/Help";
+
+// Imports lazy (carregamento dinâmico)
+const PetDetails = lazy(() => import("./pages/PetDetails"));
+const EditProfile = lazy(() => import("./pages/EditProfile"));
 
 const queryClient = new QueryClient();
 
@@ -123,7 +128,14 @@ const AppRoutes = () => {
       <Route path="/reset-password" element={<ResetPassword />} />
       
       {/* Página pública de detalhes do pet para links compartilhados */}
-      <Route path="/pet/:id" element={<PetDetails />} />
+      <Route 
+        path="/pet/:id" 
+        element={
+          <Suspense fallback={<div>Loading...</div>}>
+            <PetDetails />
+          </Suspense>
+        } 
+      />
       
       {/* Rotas protegidas */}
       <Route 
@@ -172,7 +184,9 @@ const AppRoutes = () => {
         path="/perfil/editar" 
         element={
           <ProtectedRoute>
-            <EditProfile />
+            <Suspense fallback={<div>Loading...</div>}>
+              <EditProfile />
+            </Suspense>
           </ProtectedRoute>
         } 
       />
@@ -191,6 +205,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Settings />
+          </ProtectedRoute>
+        } 
+      />
+
+      <Route 
+        path="/ajuda" 
+        element={
+          <ProtectedRoute>
+            <Help />
           </ProtectedRoute>
         } 
       />

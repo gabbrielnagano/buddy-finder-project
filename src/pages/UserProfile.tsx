@@ -16,12 +16,13 @@ interface UserProfile {
   cidade: string | null;
   estado: string | null;
   telefone: string | null;
+  bio: string | null;
 }
 
 interface Pet {
   id: string;
   name: string;
-  species: string;
+  species: string | null;
   breed: string | null;
   age: string | null;
   size: string | null;
@@ -52,7 +53,7 @@ export default function UserProfile() {
   useEffect(() => {
     setLoading(true);
     fetchProfileData();
-  }, [userId, user, routeLocation.key]);
+  }, [userId, user]);
 
   const fetchProfileData = async () => {
     const targetUserId = userId || user?.id;
@@ -60,11 +61,15 @@ export default function UserProfile() {
 
     try {
       // Buscar perfil
-      const { data: profileData } = await supabase
+      const { data: profileData, error } = await supabase
         .from('perfis')
-        .select('nome, avatar_url, cidade, estado, telefone')
+        .select('nome, avatar_url, cidade, estado, telefone, bio')
         .eq('id', targetUserId)
         .single();
+
+      if (error) {
+        console.error('Erro ao buscar perfil:', error);
+      }
 
       if (profileData) {
         setProfile(profileData);
@@ -193,6 +198,16 @@ export default function UserProfile() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Biography Section */}
+        {profile?.bio && (
+          <Card className="mb-8">
+            <CardContent className="p-6">
+              <h2 className="text-xl font-semibold text-foreground mb-3">Biografia</h2>
+              <p className="text-muted-foreground leading-relaxed">{profile.bio}</p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Pets Section */}
         <div className="mb-8">
