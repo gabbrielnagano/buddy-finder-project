@@ -1,6 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
 interface PetCardProps {
   id: string;
   name: string;
@@ -9,7 +8,6 @@ interface PetCardProps {
   age?: string;
   location?: string;
 }
-
 export function PetCard({ id, name, image, type, age, location }: PetCardProps) {
   return (
     <Card className="overflow-hidden hover:shadow-soft transition-all duration-300 animate-fade-in group">
@@ -40,7 +38,6 @@ export function PetCard({ id, name, image, type, age, location }: PetCardProps) 
           </div>
         )}
       </div>
-      
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-bold text-lg text-foreground">{name}</h3>

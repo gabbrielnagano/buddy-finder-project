@@ -53,59 +53,6 @@ export type Database = {
           },
         ]
       }
-      card: {
-        Row: {
-          comentarios: number | null
-          compartilhamentos: number | null
-          curtidas: number | null
-          data_atualizacao: string | null
-          data_criacao: string | null
-          destaque: boolean | null
-          id_card: number
-          id_pet: number
-          imagem_url: string | null
-          localizacao: string | null
-          tags: string | null
-          visualizacoes: number | null
-        }
-        Insert: {
-          comentarios?: number | null
-          compartilhamentos?: number | null
-          curtidas?: number | null
-          data_atualizacao?: string | null
-          data_criacao?: string | null
-          destaque?: boolean | null
-          id_card?: number
-          id_pet: number
-          imagem_url?: string | null
-          localizacao?: string | null
-          tags?: string | null
-          visualizacoes?: number | null
-        }
-        Update: {
-          comentarios?: number | null
-          compartilhamentos?: number | null
-          curtidas?: number | null
-          data_atualizacao?: string | null
-          data_criacao?: string | null
-          destaque?: boolean | null
-          id_card?: number
-          id_pet?: number
-          imagem_url?: string | null
-          localizacao?: string | null
-          tags?: string | null
-          visualizacoes?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "card_id_pet_fkey"
-            columns: ["id_pet"]
-            isOneToOne: false
-            referencedRelation: "pet"
-            referencedColumns: ["id_pet"]
-          },
-        ]
-      }
       comentarios: {
         Row: {
           comentario: string
@@ -274,55 +221,7 @@ export type Database = {
         }
         Relationships: []
       }
-      pet: {
-        Row: {
-          descricao: string | null
-          especie: string | null
-          id_instituicao: number | null
-          id_pet: number
-          id_usuario: number | null
-          idade: number | null
-          nome: string
-          porte: string | null
-        }
-        Insert: {
-          descricao?: string | null
-          especie?: string | null
-          id_instituicao?: number | null
-          id_pet?: number
-          id_usuario?: number | null
-          idade?: number | null
-          nome: string
-          porte?: string | null
-        }
-        Update: {
-          descricao?: string | null
-          especie?: string | null
-          id_instituicao?: number | null
-          id_pet?: number
-          id_usuario?: number | null
-          idade?: number | null
-          nome?: string
-          porte?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "pet_id_instituicao_fkey"
-            columns: ["id_instituicao"]
-            isOneToOne: false
-            referencedRelation: "instituicao"
-            referencedColumns: ["id_instituicao"]
-          },
-          {
-            foreignKeyName: "pet_id_usuario_fkey"
-            columns: ["id_usuario"]
-            isOneToOne: false
-            referencedRelation: "usuario"
-            referencedColumns: ["id_usuario"]
-          },
-        ]
-      }
-      pets: {
+      card: {
         Row: {
           active: boolean | null
           age: string | null
@@ -338,6 +237,7 @@ export type Database = {
           location: string | null
           longitude: number | null
           name: string
+          pet_id: string
           size: string | null
           special_needs: boolean | null
           species: string
@@ -360,6 +260,7 @@ export type Database = {
           location?: string | null
           longitude?: number | null
           name: string
+          pet_id?: string
           size?: string | null
           special_needs?: boolean | null
           species: string
@@ -382,12 +283,37 @@ export type Database = {
           location?: string | null
           longitude?: number | null
           name?: string
+          pet_id?: string
           size?: string | null
           special_needs?: boolean | null
           species?: string
           updated_at?: string | null
           user_id?: string
           vaccinated?: boolean | null
+        }
+        Relationships: []
+      }
+      pet: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          created_at?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }

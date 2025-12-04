@@ -1,73 +1,165 @@
-# Welcome to your Lovable project
+# BuddyFinder - Plataforma de Adoção de Pets
 
-## Project info
+Plataforma web para conectar pets disponíveis para adoção com potenciais tutores, facilitando o processo de adoção responsável.
 
-**URL**: https://lovable.dev/projects/6a6e4ce8-9a8d-4f14-9b4c-04a48b96d035
+## Pré-requisitos
 
-## How can I edit this code?
+Antes de começar, certifique-se de ter instalado:
 
-There are several ways of editing your application.
+- **Node.js** (versão 18 ou superior) - [Download](https://nodejs.org/)
+- **npm** ou **bun** (gerenciador de pacotes)
+- **Git** - [Download](https://git-scm.com/)
 
-**Use Lovable**
+### Contas e Serviços Necessários
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/6a6e4ce8-9a8d-4f14-9b4c-04a48b96d035) and start prompting.
+1. **Supabase** (Backend as a Service)
+   - Crie uma conta em [supabase.com](https://supabase.com)
+   - Crie um novo projeto
+   - Anote a **URL do projeto** e a **chave pública (anon key)**
 
-Changes made via Lovable will be committed automatically to this repo.
+2. **Google Maps API** (Geocodificação)
+   - Acesse [Google Cloud Console](https://console.cloud.google.com/)
+   - Crie um projeto e ative a **Geocoding API**
+   - Gere uma **API Key**
 
-**Use your preferred IDE**
+## Instalação
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### 1. Clone o repositório
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+```bash
+git clone https://github.com/gmartinssr/buddy-finder-project.git
+cd buddy-finder-project
+```
 
-Follow these steps:
+### 2. Instale as dependências
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+```bash
+npm install
+# ou
+bun install
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### 3. Configure as variáveis de ambiente
 
-# Step 3: Install the necessary dependencies.
-npm i
+Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```env
+VITE_SUPABASE_URL=sua_url_do_supabase
+VITE_SUPABASE_ANON_KEY=sua_chave_publica_do_supabase
+VITE_GOOGLE_MAPS_API_KEY=sua_chave_api_do_google_maps
+```
+
+### 4. Configure o banco de dados Supabase
+
+Execute as migrações SQL na ordem correta no **SQL Editor** do Supabase:
+
+1. `supabase/migrations/001_create_pets_table.sql`
+2. `supabase/migrations/20251026214531_9399b2f1-ab2a-40b0-9c5b-2f610f6084f0.sql`
+3. `supabase/migrations/20251026221448_4168db97-7a57-4f1c-ad8b-0a6f04754db6.sql`
+4. `supabase/migrations/20251027232413_b96e27d2-586c-48f7-beb3-4d1ddd54646d.sql`
+5. `supabase/migrations/20251104134219_9e3bbf73-9a4a-4b10-9987-927d4f55812a.sql`
+
+### 5. Atualize as credenciais no código
+
+**Importante:** Atualize os seguintes arquivos com suas credenciais:
+
+- `src/integrations/supabase/client.ts` - Substitua a URL e chave do Supabase
+- `src/lib/geocoding.ts` - Substitua a API Key do Google Maps
+
+### 6. Inicie o servidor de desenvolvimento
+
+```
+bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+A aplicação estará disponível em `http://localhost:3000`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Tecnologias Utilizadas
 
-**Use GitHub Codespaces**
+### Frontend
+- **React** 18.3.1 - Biblioteca UI
+- **TypeScript** 5.8.3 - Tipagem estática
+- **Vite** 5.4.19 - Build tool e dev server
+- **React Router DOM** 6.30.1 - Roteamento
+- **Tailwind CSS** 3.4.18 - Framework CSS
+- **shadcn/ui** - Componentes UI (Radix UI)
+- **Lucide React** - Ícones
+- **React Hook Form** + **Zod** - Validação de formulários
+- **react-i18next** - Internacionalização
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Backend (Supabase)
+- **PostgreSQL** 13.0.4 - Banco de dados
+- **Supabase Auth** - Autenticação
+- **Supabase Storage** - Armazenamento de imagens
+- **Row Level Security (RLS)** - Segurança de dados
 
-## What technologies are used for this project?
+### APIs Externas
+- **Google Maps Geocoding API** - Conversão de endereços em coordenadas
 
-This project is built with:
+## Scripts Disponíveis
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```bash
+npm run dev          # Inicia servidor de desenvolvimento na porta 3000
+npm run build        # Build de produção
+npm run build:dev    # Build de desenvolvimento
+npm run lint         # Verifica erros de linting
+npm run preview      # Preview do build de produção
+```
 
-## How can I deploy this project?
+## Estrutura do Banco de Dados
 
-Simply open [Lovable](https://lovable.dev/projects/6a6e4ce8-9a8d-4f14-9b4c-04a48b96d035) and click on Share -> Publish.
+### Tabelas Principais
 
-## Can I connect a custom domain to my Lovable project?
+- **pets** - Animais disponíveis para adoção
+- **favoritos** - Sistema de curtidas/salvos
+- **comentarios** - Comentários em pets
+- **perfis** - Perfis de usuários
+- **mensagens** - Sistema de chat (backend pronto)
 
-Yes, you can!
+### Políticas de Segurança (RLS)
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+Todas as tabelas possuem políticas RLS configuradas:
+- ✅ Leitura pública de pets e comentários
+- ✅ Apenas usuários autenticados podem criar pets
+- ✅ Apenas proprietários podem editar/deletar seus pets
+- ✅ Favoritos privados por usuário
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## Funcionalidades
+
+- ✅ **Autenticação completa** (login, registro, reset de senha)
+- ✅ **CRUD de pets** com upload de imagens
+- ✅ **Sistema de favoritos** com sincronização em tempo real
+- ✅ **Comentários** em pets
+- ✅ **Busca avançada** com filtros (espécie, porte, gênero, distância)
+- ✅ **Geocodificação** de endereços
+- ✅ **Internacionalização** (i18n)
+- ✅ **Responsive design**
+
+## Notas Importantes
+
+### Segurança
+- **Não commite suas credenciais** - Use variáveis de ambiente
+- As chaves no código atual são de exemplo e devem ser substituídas
+- Configure `.gitignore` para ignorar o arquivo `.env`
+
+### Limitações Conhecidas
+- Nomes de usuário nos comentários mostram "Usuário" (TODO: integrar com tabela perfis)
+- Botão de compartilhar sem funcionalidade (placeholder)
+- Sistema de mensagens preparado mas sem UI
+
+## Contribuindo
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/MinhaFeature`)
+3. Commit suas mudanças (`git commit -m 'Adiciona MinhaFeature'`)
+4. Push para a branch (`git push origin feature/MinhaFeature`)
+5. Abra um Pull Request
+
+## Licença
+
+Este projeto está sob a licença MIT.
+
+## Autor
+
+Desenvolvido por [@gmartinssr](https://github.com/gmartinssr)

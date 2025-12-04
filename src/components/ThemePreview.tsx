@@ -2,11 +2,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Heart, MessageCircle, Share } from "lucide-react";
-
 interface ThemePreviewProps {
   theme: string;
 }
-
 export const ThemePreview = ({ theme }: ThemePreviewProps) => {
   return (
     <div className={`${theme === 'dark' ? 'dark' : ''} p-4 rounded-lg border bg-background transition-all duration-300`}>

@@ -9,7 +9,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { PetCard } from "@/components/PetCard";
 import { useTranslation } from "react-i18next";
-
 interface UserProfile {
   nome: string;
   avatar_url: string | null;
@@ -18,7 +17,6 @@ interface UserProfile {
   telefone: string | null;
   bio: string | null;
 }
-
 interface Pet {
   id: string;
   name: string;
@@ -36,7 +34,6 @@ interface Pet {
   special_needs: boolean;
   active: boolean;
 }
-
 export default function UserProfile() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -47,46 +44,34 @@ export default function UserProfile() {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [pets, setPets] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
-
   const isOwnProfile = !userId || userId === user?.id;
-
   useEffect(() => {
     setLoading(true);
     fetchProfileData();
   }, [userId, user]);
-
   const fetchProfileData = async () => {
     const targetUserId = userId || user?.id;
     if (!targetUserId) return;
-
     try {
-      // Buscar perfil
       const { data: profileData, error } = await supabase
         .from('perfis')
         .select('nome, avatar_url, cidade, estado, telefone, bio')
         .eq('id', targetUserId)
         .single();
-
       if (error) {
         console.error('Erro ao buscar perfil:', error);
       }
-
       if (profileData) {
         setProfile(profileData);
       }
-
-      // Buscar email do usuário (apenas se for o próprio perfil)
       if (isOwnProfile && user) {
         setUserEmail(user.email || null);
       }
-
-      // Buscar pets do usuário
       const { data: petsData } = await supabase
-        .from('pets')
+        .from('card')
         .select('*')
         .eq('user_id', targetUserId)
-        .order('created_at', { ascending: false });
-
+        .order('created_at', { ascending: false }) as any;
       if (petsData) {
         setPets(petsData);
       }
@@ -96,7 +81,6 @@ export default function UserProfile() {
       setLoading(false);
     }
   };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -116,16 +100,13 @@ export default function UserProfile() {
       </div>
     );
   }
-
   const initials = profile?.nome
     ? profile.nome.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
     : userEmail?.[0].toUpperCase() || 'U';
-
   const displayName = profile?.nome || userEmail?.split('@')[0] || 'Usuário';
   const location = profile?.cidade && profile?.estado
     ? `${profile.cidade}, ${profile.estado}`
     : profile?.cidade || profile?.estado || null;
-
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -137,8 +118,6 @@ export default function UserProfile() {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Voltar
         </Button>
-
-        {/* Profile Header */}
         <Card className="mb-8">
           <CardContent className="p-8">
             <div className="flex flex-col md:flex-row items-start gap-6 mb-6">
@@ -148,7 +127,6 @@ export default function UserProfile() {
                   {initials}
                 </AvatarFallback>
               </Avatar>
-
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between mb-4">
                   <h1 className="text-3xl font-bold text-foreground">{displayName}</h1>
@@ -163,7 +141,6 @@ export default function UserProfile() {
                     </Button>
                   )}
                 </div>
-
                 <div className="space-y-2 text-muted-foreground">
                   {location && (
                     <div className="flex items-center gap-2">
@@ -171,14 +148,12 @@ export default function UserProfile() {
                       <span>{location}</span>
                     </div>
                   )}
-                  
                   {isOwnProfile && userEmail && (
                     <div className="flex items-center gap-2">
                       <Mail className="h-4 w-4" />
                       <span>{userEmail}</span>
                     </div>
                   )}
-
                   {profile?.telefone && (
                     <div className="flex items-center gap-2">
                       <Phone className="h-4 w-4" />
@@ -186,7 +161,6 @@ export default function UserProfile() {
                     </div>
                   )}
                 </div>
-
                 <div className="flex items-center gap-2 mt-4">
                   <div className="flex items-center gap-1 px-3 py-1.5 bg-primary/10 text-primary rounded-full">
                     <PawPrint className="h-4 w-4" />
@@ -198,8 +172,6 @@ export default function UserProfile() {
             </div>
           </CardContent>
         </Card>
-
-        {/* Biography Section */}
         {profile?.bio && (
           <Card className="mb-8">
             <CardContent className="p-6">
@@ -208,8 +180,6 @@ export default function UserProfile() {
             </CardContent>
           </Card>
         )}
-
-        {/* Pets Section */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
@@ -225,7 +195,6 @@ export default function UserProfile() {
               </Button>
             )}
           </div>
-
           {pets.length === 0 ? (
             <Card>
               <CardContent className="p-12 text-center">
@@ -253,7 +222,7 @@ export default function UserProfile() {
                   id={pet.id}
                   name={pet.name}
                   image={pet.image_url || ''}
-                  type={pet.species === 'Gato' ? 'gato' : 'cachorro'}
+                  type={pet.species === 'gato' ? 'gato' : 'cachorro'}
                   age={pet.age || ''}
                   location={pet.location || ''}
                 />

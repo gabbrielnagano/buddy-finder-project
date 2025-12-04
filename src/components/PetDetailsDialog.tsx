@@ -16,7 +16,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
-
 interface Pet {
   id: string;
   name: string;
@@ -34,7 +33,6 @@ interface Pet {
   active: boolean;
   specialNeeds: boolean;
 }
-
 interface Comment {
   id: string;
   user_name: string;
@@ -42,7 +40,6 @@ interface Comment {
   comment: string;
   created_at: string;
 }
-
 const mockComments: Comment[] = [
   {
     id: "1",
@@ -66,13 +63,11 @@ const mockComments: Comment[] = [
     created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
   }
 ];
-
 interface PetDetailsDialogProps {
   pet: Pet | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
-
 export function PetDetailsDialog({ pet, open, onOpenChange }: PetDetailsDialogProps) {
   const { user } = useAuth();
   const [isLiked, setIsLiked] = useState(false);
@@ -80,18 +75,13 @@ export function PetDetailsDialog({ pet, open, onOpenChange }: PetDetailsDialogPr
   const [newComment, setNewComment] = useState("");
   const [comments, setComments] = useState<Comment[]>([]);
   const [loadingComments, setLoadingComments] = useState(false);
-
-  // Carregar comentários quando o dialog abrir
   useEffect(() => {
     if (open && pet) {
       loadComments();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, pet?.id]);
-
   const loadComments = async () => {
     if (!pet) return;
-    
     setLoadingComments(true);
     try {
       const { data, error } = await supabase
@@ -99,14 +89,11 @@ export function PetDetailsDialog({ pet, open, onOpenChange }: PetDetailsDialogPr
         .select('*')
         .eq('pet_id', pet.id)
         .order('created_at', { ascending: false });
-
       if (error) throw error;
-
       if (data) {
-        // Mapear dados do banco para o formato esperado
         const formattedComments: Comment[] = data.map(c => ({
           id: c.id,
-          user_name: 'Usuário', // TODO: Buscar nome do usuário
+          user_name: 'Usuário',
           user_avatar: null,
           comment: c.comentario,
           created_at: c.created_at || new Date().toISOString()
@@ -119,7 +106,6 @@ export function PetDetailsDialog({ pet, open, onOpenChange }: PetDetailsDialogPr
       setLoadingComments(false);
     }
   };
-
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
@@ -129,13 +115,10 @@ export function PetDetailsDialog({ pet, open, onOpenChange }: PetDetailsDialogPr
       });
     } else {
       navigator.clipboard.writeText(window.location.href);
-      // Could add a toast notification here
     }
   };
-
   const handleAddComment = async () => {
     if (!newComment.trim() || !pet) return;
-
     try {
       const { data, error } = await supabase
         .from('comentarios')
@@ -148,11 +131,8 @@ export function PetDetailsDialog({ pet, open, onOpenChange }: PetDetailsDialogPr
         ])
         .select()
         .single();
-
       if (error) throw error;
-
       if (data) {
-        // Adicionar o comentário à lista local
         const newCommentObj: Comment = {
           id: data.id,
           user_name: user?.user_metadata?.name || 'Você',
@@ -176,7 +156,6 @@ export function PetDetailsDialog({ pet, open, onOpenChange }: PetDetailsDialogPr
       });
     }
   };
-
   const formatTimeAgo = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -184,29 +163,23 @@ export function PetDetailsDialog({ pet, open, onOpenChange }: PetDetailsDialogPr
     const diffInMinutes = Math.floor(diffInMs / 60000);
     const diffInHours = Math.floor(diffInMs / 3600000);
     const diffInDays = Math.floor(diffInMs / 86400000);
-
     if (diffInMinutes < 1) return "agora";
     if (diffInMinutes < 60) return `há ${diffInMinutes} minuto${diffInMinutes > 1 ? 's' : ''}`;
     if (diffInHours < 24) return `há ${diffInHours} hora${diffInHours > 1 ? 's' : ''}`;
     if (diffInDays < 7) return `há ${diffInDays} dia${diffInDays > 1 ? 's' : ''}`;
     return date.toLocaleDateString('pt-BR');
   };
-
   const getSpeciesIcon = () => {
     return pet?.species === "cachorro" ? "🐕" : "🐱";
   };
-
   const getGenderIcon = () => {
     return pet?.gender === "macho" ? "♂️" : "♀️";
   };
-
   if (!pet) return null;
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-6xl max-h-[90vh] p-0 overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
-          {/* Image Section */}
           <div className="relative bg-muted">
             <img 
               src={pet.image} 
@@ -240,8 +213,6 @@ export function PetDetailsDialog({ pet, open, onOpenChange }: PetDetailsDialogPr
               </Button>
             </div>
           </div>
-
-          {/* Content Section */}
           <div className="flex flex-col h-full">
             <DialogHeader className="p-6 pb-4">
               <DialogTitle className="text-2xl font-bold flex items-center gap-2">
@@ -251,22 +222,16 @@ export function PetDetailsDialog({ pet, open, onOpenChange }: PetDetailsDialogPr
                 {pet.breed} • {pet.age} • {getGenderIcon()} {pet.gender}
               </DialogDescription>
             </DialogHeader>
-
             <div className="flex-1 overflow-hidden flex flex-col">
               <ScrollArea className="flex-1 px-6">
-                {/* Location */}
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
                   <MapPin className="h-4 w-4" />
                   {pet.location}
                 </div>
-
-                {/* Description */}
                 <div className="mb-6">
                   <h3 className="font-semibold mb-2">Sobre {pet.name}</h3>
                   <p className="text-muted-foreground leading-relaxed">{pet.description}</p>
                 </div>
-
-                {/* Characteristics */}
                 <div className="mb-6">
                   <h3 className="font-semibold mb-3">Características</h3>
                   <div className="flex flex-wrap gap-2">
@@ -306,10 +271,7 @@ export function PetDetailsDialog({ pet, open, onOpenChange }: PetDetailsDialogPr
                     )}
                   </div>
                 </div>
-
                 <Separator className="my-4" />
-
-                {/* Comments Section */}
                 <div className="mb-6">
                   <h3 className="font-semibold mb-4">Comentários</h3>
                   <div className="space-y-4">
@@ -331,10 +293,7 @@ export function PetDetailsDialog({ pet, open, onOpenChange }: PetDetailsDialogPr
                   </div>
                 </div>
               </ScrollArea>
-
-              {/* Comment Input & Actions */}
               <div className="p-6 pt-4 border-t bg-background">
-                {/* Add Comment */}
                 <div className="flex gap-2 mb-4">
                   <Input
                     placeholder="Adicione um comentário..."
@@ -347,8 +306,6 @@ export function PetDetailsDialog({ pet, open, onOpenChange }: PetDetailsDialogPr
                     <Send className="h-4 w-4" />
                   </Button>
                 </div>
-
-                {/* Action Buttons */}
                 <div className="flex gap-2">
                   <Button className="flex-1" size="lg">
                     Quero Adotar

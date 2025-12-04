@@ -7,14 +7,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useNavigate, useLocation } from "react-router-dom";
-
 interface UserProfile {
   nome: string;
   avatar_url: string | null;
   cidade: string | null;
   estado: string | null;
 }
-
 export function UserProfileSidebar() {
   const { user } = useAuth();
   const { state } = useSidebar();
@@ -23,40 +21,30 @@ export function UserProfileSidebar() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [petsCount, setPetsCount] = useState(0);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     if (user) {
       fetchUserData();
     }
   }, [user, routeLocation.pathname]);
-
   const fetchUserData = async () => {
     if (!user) return;
-    
     setLoading(true);
-
     try {
-      // Buscar perfil do usuário
       const { data: profileData, error } = await supabase
         .from('perfis')
         .select('nome, avatar_url, cidade, estado')
         .eq('id', user.id)
         .single();
-
       if (error) {
         console.error('Erro ao buscar perfil:', error);
       }
-
       if (profileData) {
         setProfile(profileData);
       }
-
-      // Contar pets do usuário
       const { count } = await supabase
-        .from('pets')
+        .from('card')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', user.id);
-
       setPetsCount(count || 0);
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -64,9 +52,7 @@ export function UserProfileSidebar() {
       setLoading(false);
     }
   };
-
   if (!user) return null;
-
   if (loading) {
     return (
       <div className="px-4 py-3 border-b border-border">
@@ -82,15 +68,12 @@ export function UserProfileSidebar() {
       </div>
     );
   }
-
   const initials = profile?.nome
     ? profile.nome.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
     : user.email?.[0].toUpperCase() || 'U';
-
   const location = profile?.cidade && profile?.estado
     ? `${profile.cidade}, ${profile.estado}`
     : profile?.cidade || profile?.estado || 'Localização não definida';
-
   return (
     <div className="px-4 py-3 border-b border-border bg-muted/30">
       <div 
@@ -105,18 +88,15 @@ export function UserProfileSidebar() {
             {initials}
           </AvatarFallback>
         </Avatar>
-
         {state !== "collapsed" && (
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-sm text-foreground truncate">
               {profile?.nome || user.email?.split('@')[0] || 'Usuário'}
             </p>
-            
             <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
               <MapPin className="h-3 w-3 flex-shrink-0" />
               <span className="truncate">{location}</span>
             </div>
-
             <div className="flex items-center gap-1 mt-1.5">
               <Badge 
                 variant="secondary" 

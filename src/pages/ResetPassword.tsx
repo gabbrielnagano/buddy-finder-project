@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { Eye, EyeOff } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-
 export default function ResetPassword() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -18,23 +17,18 @@ export default function ResetPassword() {
   const [passwordResetComplete, setPasswordResetComplete] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-
   useEffect(() => {
-    // Se já completou o reset, não processar novamente
     if (passwordResetComplete) {
       return;
     }
-
     const validateToken = async () => {
       console.log('URL atual:', window.location.href);
       console.log('Search params:', Object.fromEntries(searchParams.entries()));
-      
       const accessToken = searchParams.get('access_token') || searchParams.get('token');
       const refreshToken = searchParams.get('refresh_token');
       const type = searchParams.get('type');
       const error = searchParams.get('error');
       const errorDescription = searchParams.get('error_description');
-
       if (error) {
         console.error('Erro na URL:', error, errorDescription);
         toast.error(`Erro: ${errorDescription || error}`);
@@ -42,16 +36,13 @@ export default function ResetPassword() {
         setCheckingToken(false);
         return;
       }
-
       if (type === 'recovery' && accessToken) {
         console.log('Tentando definir sessão com tokens...');
         try {
           const sessionData = refreshToken 
             ? { access_token: accessToken, refresh_token: refreshToken }
             : { access_token: accessToken, refresh_token: '' };
-
           const { data, error } = await supabase.auth.setSession(sessionData);
-          
           if (error) {
             console.error('Erro ao definir sessão:', error);
             toast.error('Link de recuperação inválido ou expirado');
@@ -78,48 +69,37 @@ export default function ResetPassword() {
           setTimeout(() => navigate('/login'), 3000);
         }
       }
-      
       setCheckingToken(false);
     };
-
     validateToken();
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth state change:', event, session);
       if (event === 'PASSWORD_RECOVERY' || event === 'TOKEN_REFRESHED') {
         setIsValidToken(true);
       }
     });
-
     return () => subscription.unsubscribe();
   }, [navigate, searchParams, passwordResetComplete]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!isValidToken) {
       toast.error('Token de recuperação inválido');
       return;
     }
-    
     if (password !== confirmPassword) {
       toast.error('As senhas não coincidem');
       return;
     }
-
     if (password.length < 6) {
       toast.error('A senha deve ter pelo menos 6 caracteres');
       return;
     }
-
     setLoading(true);
     console.log('Iniciando processo de redefinição de senha...');
-
     try {
       const { error } = await supabase.auth.updateUser({
         password: password
       });
-
       if (error) {
         console.error('Erro ao atualizar senha:', error);
         toast.error('Erro ao redefinir senha: ' + error.message);
@@ -127,11 +107,7 @@ export default function ResetPassword() {
       } else {
         console.log('Senha atualizada com sucesso!');
         toast.success('Senha redefinida com sucesso!');
-        
-        // Marcar como completo e redirecionar após um tempo
         setPasswordResetComplete(true);
-        
-        // Fazer logout e redirecionar com timeout
         setTimeout(async () => {
           await supabase.auth.signOut();
           window.location.href = '/login';
@@ -143,15 +119,12 @@ export default function ResetPassword() {
       setLoading(false);
     }
   };
-
   const handleBackToLogin = async () => {
     console.log('Voltando ao login manualmente...');
     setPasswordResetComplete(true);
     await supabase.auth.signOut();
     window.location.href = '/login';
   };
-
-  // Se já completou o reset, mostrar mensagem de sucesso com botão manual
   if (passwordResetComplete) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-orange-gradient p-4">
@@ -181,7 +154,6 @@ export default function ResetPassword() {
       </div>
     );
   }
-
   if (checkingToken) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-orange-gradient p-4">
@@ -201,7 +173,6 @@ export default function ResetPassword() {
       </div>
     );
   }
-
   if (!isValidToken) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-orange-gradient p-4">
@@ -224,7 +195,6 @@ export default function ResetPassword() {
       </div>
     );
   }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-orange-gradient p-4">
       <Card className="w-full max-w-md">
@@ -263,7 +233,6 @@ export default function ResetPassword() {
                 </button>
               </div>
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirmar Senha</Label>
               <Input
@@ -277,7 +246,6 @@ export default function ResetPassword() {
                 disabled={loading}
               />
             </div>
-
             <div className="space-y-3">
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? (
@@ -289,7 +257,6 @@ export default function ResetPassword() {
                   'Redefinir Senha'
                 )}
               </Button>
-
               <Button 
                 type="button" 
                 variant="outline" 
