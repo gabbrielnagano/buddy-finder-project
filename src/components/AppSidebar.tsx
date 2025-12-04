@@ -16,12 +16,10 @@ import buddyfinderLogo from "@/assets/buddyfinder-logo.png";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserProfileSidebar } from "./UserProfileSidebar";
-
 export function AppSidebar() {
   const { state } = useSidebar();
   const { t } = useTranslation();
   const { signOut } = useAuth();
-
   return (
     <Sidebar className={state === "collapsed" ? "w-16" : "w-64"} collapsible="icon">
       <SidebarHeader className="p-4">
@@ -39,9 +37,7 @@ export function AppSidebar() {
           )}
         </div>
       </SidebarHeader>
-
       <UserProfileSidebar />
-
       <SidebarContent className="px-2">
         <SidebarGroup>
           <SidebarGroupContent>
@@ -82,7 +78,6 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-
       <SidebarFooter className="p-2">
         <SidebarMenu>
           <SidebarMenuItem>

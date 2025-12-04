@@ -3,7 +3,6 @@ import { initReactI18next } from 'react-i18next';
 import ptBR from './locales/pt-BR.json';
 import enUS from './locales/en-US.json';
 import esES from './locales/es-ES.json';
-
 const resources = {
   'pt-BR': {
     translation: ptBR
@@ -15,7 +14,6 @@ const resources = {
     translation: esES
   }
 };
-
 i18n
   .use(initReactI18next)
   .init({
@@ -26,5 +24,4 @@ i18n
       escapeValue: false
     }
   });
-
 export default i18n;

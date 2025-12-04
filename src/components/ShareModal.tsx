@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Copy, Check, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
 interface ShareOption {
   id: string;
   name: string;
@@ -12,7 +11,6 @@ interface ShareOption {
   color: string;
   action: (url: string, title: string, text: string) => void;
 }
-
 interface ShareModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -20,13 +18,11 @@ interface ShareModalProps {
   title: string;
   text: string;
 }
-
 export function ShareModal({ isOpen, onClose, url, title, text }: ShareModalProps) {
   const [copied, setCopied] = useState(false);
   const [showFacebookModal, setShowFacebookModal] = useState(false);
   const [facebookMessage, setFacebookMessage] = useState('');
   const { toast } = useToast();
-
   const shareOptions: ShareOption[] = [
     {
       id: 'facebook',
@@ -34,10 +30,8 @@ export function ShareModal({ isOpen, onClose, url, title, text }: ShareModalProp
       icon: '📘',
       color: 'bg-[#1877F2] hover:bg-[#166FE5]',
       action: (url, title, text) => {
-        // Abrir diretamente o diálogo de criar post do Facebook com o link do pet
         const shareText = `🐾 ${title}\n\n${text}`;
         const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(shareText)}`;
-
         window.open(facebookShareUrl, '_blank', 'noopener');
       }
     },
@@ -47,35 +41,23 @@ export function ShareModal({ isOpen, onClose, url, title, text }: ShareModalProp
       icon: '💬',
       color: 'bg-[#25D366] hover:bg-[#1faa52]',
       action: (url, title, text) => {
-        // WhatsApp mais pessoal e direto
         const whatsText = `🐾 *${title}*
-
 ${text}
-
 Olha que fofinho! Será que você conhece alguém que gostaria de adotar? 🥺
-
 Veja mais detalhes: ${url}
-
 #AdocaoResponsavel #AmorIncondicional`;
-        
-        // Usar whatsapp:// para melhor compatibilidade mobile
         const whatsappUrl = `whatsapp://send?text=${encodeURIComponent(whatsText)}`;
         const webWhatsappUrl = `https://web.whatsapp.com/send?text=${encodeURIComponent(whatsText)}`;
-        
-        // Tentar abrir o app nativo primeiro, depois fallback para web
         const link = document.createElement('a');
         link.href = whatsappUrl;
         link.target = '_blank';
         link.click();
-        
-        // Fallback para web WhatsApp se o app não abrir em 2 segundos
         setTimeout(() => {
           window.open(webWhatsappUrl, '_blank');
         }, 2000);
       }
     }
   ];
-
   const handleCopyFacebookMessage = async () => {
     try {
       await navigator.clipboard.writeText(facebookMessage);
@@ -92,36 +74,26 @@ Veja mais detalhes: ${url}
       });
     }
   };
-
   const handleOpenFacebook = () => {
-    // Abrir o Facebook no feed principal
     window.open('https://www.facebook.com/', '_blank');
     setShowFacebookModal(false);
   };
-
   const handleCopyLink = async () => {
     console.log('🔍 Copy button clicked!');
     console.log('📋 URL to copy:', url);
     console.log('🌐 Clipboard API available:', !!navigator.clipboard);
     console.log('🔒 Secure context:', window.isSecureContext);
-    
     try {
-      // Método mais simples e direto
       await navigator.clipboard.writeText(url);
-      
       console.log('✅ Copy successful via Clipboard API');
       setCopied(true);
       toast({
         title: "✅ Link copiado!",
         description: "O link foi copiado para a área de transferência"
       });
-      
       setTimeout(() => setCopied(false), 2000);
-      
     } catch (error) {
       console.log('❌ Clipboard API failed:', error);
-      
-      // Fallback simples se clipboard API falhar
       try {
         const textArea = document.createElement('textarea');
         textArea.value = url;
@@ -131,35 +103,26 @@ Veja mais detalhes: ${url}
         document.body.appendChild(textArea);
         textArea.select();
         textArea.setSelectionRange(0, 99999);
-        
         const success = document.execCommand('copy');
         document.body.removeChild(textArea);
-        
         console.log('📄 execCommand result:', success);
-        
         if (success) {
           setCopied(true);
           toast({
             title: "✅ Link copiado!",
             description: "O link foi copiado para a área de transferência"
           });
-          
           setTimeout(() => setCopied(false), 2000);
         } else {
           throw new Error('execCommand returned false');
         }
-        
       } catch (fallbackError) {
         console.log('❌ Fallback also failed:', fallbackError);
-        
-        // Se tudo falhar, mostrar modal com o link
         toast({
           title: "Copie o link manualmente",
           description: url,
           duration: 10000
         });
-        
-        // Selecionar o input para facilitar cópia manual
         const input = document.querySelector('input[readonly]') as HTMLInputElement;
         if (input) {
           input.focus();
@@ -168,18 +131,15 @@ Veja mais detalhes: ${url}
       }
     }
   };
-
   const handleShare = (option: ShareOption) => {
     option.action(url, title, text);
   };
-
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="sm:max-w-lg border-0 bg-transparent shadow-none p-0 overflow-hidden">
           <div className="bg-orange-gradient p-1 rounded-2xl shadow-2xl">
             <div className="bg-white rounded-2xl overflow-hidden">
-              {/* Header */}
               <div className="flex items-center justify-between p-6 pb-4">
                 <DialogTitle className="text-xl font-bold text-gray-900">Share</DialogTitle>
                 <Button
@@ -191,8 +151,6 @@ Veja mais detalhes: ${url}
                   <X className="h-5 w-5" />
                 </Button>
               </div>
-
-              {/* Share Options */}
               <div className="px-6 py-4">
                 <div className="grid grid-cols-4 gap-6">
                   {shareOptions.map((option) => (
@@ -210,8 +168,6 @@ Veja mais detalhes: ${url}
                   ))}
                 </div>
               </div>
-
-              {/* URL Section */}
               <div className="px-6 pb-6 pt-2">
                 <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
                   <div className="flex-1 min-w-0">
@@ -248,8 +204,6 @@ Veja mais detalhes: ${url}
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* Modal do Facebook */}
       <Dialog open={showFacebookModal} onOpenChange={setShowFacebookModal}>
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
@@ -257,20 +211,17 @@ Veja mais detalhes: ${url}
               📘 Compartilhar no Facebook
             </DialogTitle>
           </DialogHeader>
-          
           <div className="space-y-4">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <p className="text-sm text-blue-800 mb-3 font-medium">
                 ✨ Sua mensagem está pronta! Copie o texto abaixo e cole no Facebook:
               </p>
-              
               <div className="bg-white border border-blue-200 rounded-lg p-4 max-h-48 overflow-y-auto">
                 <pre className="text-sm text-gray-800 whitespace-pre-wrap font-sans leading-relaxed">
                   {facebookMessage}
                 </pre>
               </div>
             </div>
-
             <div className="flex gap-3">
               <Button 
                 onClick={handleCopyFacebookMessage}
@@ -279,7 +230,6 @@ Veja mais detalhes: ${url}
                 <Copy className="h-4 w-4 mr-2" />
                 Copiar Mensagem
               </Button>
-              
               <Button 
                 onClick={handleOpenFacebook}
                 className="flex-1 bg-[#1877F2] hover:bg-[#166FE5] text-white"
@@ -287,7 +237,6 @@ Veja mais detalhes: ${url}
                 📘 Abrir Facebook
               </Button>
             </div>
-
             <div className="text-xs text-gray-600 bg-gray-50 rounded-lg p-3">
               <p className="font-medium mb-1">💡 Como usar:</p>
               <p>1. Clique em "Copiar Mensagem"</p>

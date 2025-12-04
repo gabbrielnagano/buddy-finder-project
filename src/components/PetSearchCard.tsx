@@ -10,7 +10,6 @@ import { useFavorites } from "@/contexts/FavoritesContext";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-
 interface Pet {
   id: string;
   name: string;
@@ -29,11 +28,9 @@ interface Pet {
   specialNeeds: boolean;
   distance?: number;
 }
-
 interface PetSearchCardProps {
   pet: Pet;
 }
-
 export function PetSearchCard({ pet }: PetSearchCardProps) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const { t } = useTranslation();
@@ -46,36 +43,26 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [loadingComments, setLoadingComments] = useState(false);
-
   const isLiked = isFavorite(pet.id);
-
-  // Fetch real counts from database
   useEffect(() => {
     fetchCounts();
   }, [pet.id]);
-
   const fetchCounts = async () => {
     try {
-      // Get favorites count
       const { count: favCount } = await supabase
         .from('favoritos')
         .select('*', { count: 'exact', head: true })
         .eq('pet_id', pet.id);
-
       setLikeCount(favCount || 0);
-
-      // Get comments count
       const { count: commCount } = await supabase
         .from('comentarios')
         .select('*', { count: 'exact', head: true })
         .eq('pet_id', pet.id);
-
       setCommentCount(commCount || 0);
     } catch (error) {
       console.error('Error fetching counts:', error);
     }
   };
-
   const fetchComments = async () => {
     setLoadingComments(true);
     try {
@@ -84,7 +71,6 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
         .select('*')
         .eq('pet_id', pet.id)
         .order('created_at', { ascending: false });
-
       if (error) throw error;
       setComments(data || []);
     } catch (error) {
@@ -97,20 +83,16 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
       setLoadingComments(false);
     }
   };
-
   const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
     await toggleFavorite(pet);
-    // Refetch to get updated count
     await fetchCounts();
   };
-
   const handleCommentClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
     await fetchComments();
     setIsCommentsOpen(true);
   };
-
   const handleAddComment = async (comment: string) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -121,7 +103,6 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
         });
         return;
       }
-
       const { error } = await supabase
         .from('comentarios')
         .insert({
@@ -129,14 +110,10 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
           usuario_id: user.id,
           comentario: comment
         });
-
       if (error) throw error;
-
       toast({
         title: "Comentário adicionado com sucesso!"
       });
-
-      // Refetch comments and counts
       await fetchComments();
       await fetchCounts();
     } catch (error) {
@@ -147,17 +124,14 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
       });
     }
   };
-
   const handleSave = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Previne o click de abrir o modal
+    e.stopPropagation();
     setIsSaved(!isSaved);
   };
-
   const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsShareOpen(true);
   };
-
   const getSizeLabel = (size: string) => {
     switch (size) {
       case "pequeno": return "Pequeno";
@@ -166,7 +140,6 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
       default: return size;
     }
   };
-
   const getAgeLabel = (age: string) => {
     switch (age) {
       case "filhote": return "Filhote";
@@ -175,7 +148,6 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
       default: return age;
     }
   };
-
   const getGenderLabel = (gender: string) => {
     switch (gender) {
       case "macho": return "Macho";
@@ -183,7 +155,6 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
       default: return gender;
     }
   };
-
   const getCharacteristics = () => {
     const characteristics = [];
     if (pet.vaccinated) characteristics.push("Vacinado");
@@ -193,7 +164,6 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
     if (pet.specialNeeds) characteristics.push("Necessidades Especiais");
     return characteristics;
   };
-
   return (
     <>
       <PetPopup 
@@ -253,7 +223,6 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
             </Badge>
           </div>
         </div>
-        
         <CardContent className="p-5">
           <div className="flex items-start justify-between mb-3">
             <div className="flex-1 min-w-0">
@@ -269,13 +238,9 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
               </div>
             </div>
           </div>
-
-          {/* Pet Description */}
           <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
             {pet.description}
           </p>
-
-          {/* Characteristics */}
           {getCharacteristics().length > 0 && (
             <div className="flex flex-wrap gap-1 mb-4">
               {getCharacteristics().slice(0, 3).map((characteristic, index) => (
@@ -294,8 +259,6 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
               )}
             </div>
           )}
-          
-          {/* Actions */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
               <Button
@@ -309,7 +272,6 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
                 />
                 <span className="text-sm">{likeCount}</span>
               </Button>
-              
               <Button
                 variant="ghost" 
                 size="sm"
@@ -320,7 +282,6 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
                 <span className="text-sm">{commentCount}</span>
               </Button>
             </div>
-            
             <div className="flex items-center gap-1">
               <Button
                 variant="ghost"
@@ -330,7 +291,6 @@ export function PetSearchCard({ pet }: PetSearchCardProps) {
               >
                 <Share2 className="h-4 w-4" />
               </Button>
-              
               <Button
                 variant="ghost"
                 size="sm"

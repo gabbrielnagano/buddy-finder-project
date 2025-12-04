@@ -15,7 +15,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import type { Database } from "@/integrations/supabase/types";
 import { geocodeAddress } from "@/lib/geocoding";
 import { ImageCropDialog } from "@/components/ImageCropDialog";
-
 interface PetFormData {
   name: string;
   breed: string;
@@ -28,7 +27,6 @@ interface PetFormData {
   tags: string[];
   image?: File;
 }
-
 const PREDEFINED_TAGS = [
   "Vacinado",
   "Castrado",
@@ -46,29 +44,24 @@ const PREDEFINED_TAGS = [
   "Bom com outros pets",
   "Necessita cuidados especiais"
 ];
-
 const SIZES = [
   { value: "pequeno", label: "Pequeno" },
   { value: "medio", label: "Médio" },
   { value: "grande", label: "Grande" }
 ];
-
 const SPECIES = [
   { value: "cachorro", label: "🐕 Cachorro" },
   { value: "gato", label: "🐱 Gato" }
 ];
-
 const AGES = [
   { value: "filhote", label: "Filhote" },
   { value: "adulto", label: "Adulto" },
   { value: "idoso", label: "Idoso" }
 ];
-
 const GENDERS = [
   { value: "macho", label: "Macho" },
   { value: "femea", label: "Fêmea" }
 ];
-
 export default function AdicionarPet() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -78,7 +71,6 @@ export default function AdicionarPet() {
   const [imageSrc, setImageSrc] = useState<string>("");
   const [showCropDialog, setShowCropDialog] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>("");
-  
   const [formData, setFormData] = useState<PetFormData>({
     name: "",
     breed: "",
@@ -90,14 +82,12 @@ export default function AdicionarPet() {
     description: "",
     tags: [],
   });
-
   const handleInputChange = (field: keyof PetFormData, value: string) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
   };
-
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -109,7 +99,6 @@ export default function AdicionarPet() {
       reader.readAsDataURL(file);
     }
   };
-
   const handleCropComplete = (croppedImageBlob: Blob) => {
     const croppedFile = new File([croppedImageBlob], `pet-${Date.now()}.jpg`, { type: "image/jpeg" });
     setFormData(prev => ({
@@ -118,7 +107,6 @@ export default function AdicionarPet() {
     }));
     setImagePreview(URL.createObjectURL(croppedImageBlob));
   };
-
   const addTag = (tag: string) => {
     if (tag && !formData.tags.includes(tag)) {
       setFormData(prev => ({
@@ -127,24 +115,20 @@ export default function AdicionarPet() {
       }));
     }
   };
-
   const removeTag = (tagToRemove: string) => {
     setFormData(prev => ({
       ...prev,
       tags: prev.tags.filter(tag => tag !== tagToRemove)
     }));
   };
-
   const addCustomTag = () => {
     if (customTag.trim()) {
       addTag(customTag.trim());
       setCustomTag("");
     }
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!formData.name || !formData.breed || !formData.species || !formData.age || !formData.gender || !formData.location || !formData.size) {
       toast({
         title: "Erro",
@@ -153,15 +137,11 @@ export default function AdicionarPet() {
       });
       return;
     }
-
     setLoading(true);
-    
     try {
       let imageUrl = null;
       let latitude: number | null = null;
       let longitude: number | null = null;
-      
-      // Geocodificar o endereço
       if (formData.location) {
         const geoResult = await geocodeAddress(formData.location);
         if (geoResult) {
@@ -169,30 +149,22 @@ export default function AdicionarPet() {
           longitude = geoResult.longitude;
         }
       }
-      
-      // Upload da imagem se existir
       if (formData.image) {
         const fileExt = formData.image.name.split('.').pop();
         const fileName = `${user?.id}/${Date.now()}.${fileExt}`;
-        
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('pet-images')
           .upload(fileName, formData.image);
-
         if (uploadError) {
           throw uploadError;
         }
-
-        // Obter URL pública da imagem
         const { data: urlData } = supabase.storage
           .from('pet-images')
           .getPublicUrl(fileName);
-        
         imageUrl = urlData.publicUrl;
       }
-
-      // Mapear tags para características booleanas
-      const petData: Database['public']['Tables']['pets']['Insert'] = {
+      const cardData = {
+        user_id: user?.id || '',
         name: formData.name,
         species: formData.species,
         breed: formData.breed,
@@ -202,7 +174,6 @@ export default function AdicionarPet() {
         size: formData.size,
         description: formData.description || null,
         image_url: imageUrl,
-        user_id: user?.id || '',
         latitude,
         longitude,
         vaccinated: formData.tags.includes('Vacinado'),
@@ -211,22 +182,15 @@ export default function AdicionarPet() {
         active: formData.tags.includes('Ativo') || formData.tags.includes('Brincalhão'),
         special_needs: formData.tags.includes('Necessita cuidados especiais'),
       };
-
-      const { data, error } = await supabase
-        .from('pets')
-        .insert(petData)
-        .select();
-
+      const { error } = await supabase
+        .from('card')
+        .insert(cardData as any);
       if (error) throw error;
-
       toast({
         title: "Sucesso!",
         description: "Pet adicionado com sucesso!",
       });
-
-      // Redirecionar para a página inicial ou de pets
       navigate("/");
-      
     } catch (error) {
       console.error("Erro ao adicionar pet:", error);
       toast({
@@ -238,7 +202,6 @@ export default function AdicionarPet() {
       setLoading(false);
     }
   };
-
   return (
     <div className="container mx-auto p-6 max-w-4xl">
       <div className="mb-6">
@@ -250,7 +213,6 @@ export default function AdicionarPet() {
           <ArrowLeft className="mr-2 h-4 w-4" />
           Voltar
         </Button>
-        
         <div className="text-center">
           <h1 className="text-3xl font-bold text-primary mb-2">
             Adicionar Novo Pet
@@ -260,7 +222,6 @@ export default function AdicionarPet() {
           </p>
         </div>
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle>Informações do Pet</CardTitle>
@@ -268,10 +229,8 @@ export default function AdicionarPet() {
             Preencha todos os campos para criar o perfil do pet
           </CardDescription>
         </CardHeader>
-        
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Upload de Imagem */}
             <div className="space-y-2">
               <Label htmlFor="image">Foto do Pet</Label>
               <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
@@ -299,16 +258,13 @@ export default function AdicionarPet() {
                 )}
               </div>
             </div>
-
             <ImageCropDialog
               open={showCropDialog}
               imageSrc={imageSrc}
               onClose={() => setShowCropDialog(false)}
               onComplete={handleCropComplete}
             />
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Nome */}
               <div className="space-y-2">
                 <Label htmlFor="name">Nome do Pet *</Label>
                 <Input
@@ -319,8 +275,6 @@ export default function AdicionarPet() {
                   required
                 />
               </div>
-
-              {/* Espécie */}
               <div className="space-y-2">
                 <Label htmlFor="species">Espécie *</Label>
                 <Select value={formData.species} onValueChange={(value) => handleInputChange("species", value)}>
@@ -337,9 +291,7 @@ export default function AdicionarPet() {
                 </Select>
               </div>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Raça */}
               <div className="space-y-2">
                 <Label htmlFor="breed">Raça *</Label>
                 <Input
@@ -350,8 +302,6 @@ export default function AdicionarPet() {
                   required
                 />
               </div>
-
-              {/* Idade */}
               <div className="space-y-2">
                 <Label htmlFor="age">Idade *</Label>
                 <Select value={formData.age} onValueChange={(value) => handleInputChange("age", value)}>
@@ -368,9 +318,7 @@ export default function AdicionarPet() {
                 </Select>
               </div>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Gênero */}
               <div className="space-y-2">
                 <Label htmlFor="gender">Gênero *</Label>
                 <Select value={formData.gender} onValueChange={(value) => handleInputChange("gender", value)}>
@@ -386,8 +334,6 @@ export default function AdicionarPet() {
                   </SelectContent>
                 </Select>
               </div>
-
-              {/* Localização */}
               <div className="space-y-2">
                 <Label htmlFor="location">Localização *</Label>
                 <Input
@@ -399,8 +345,6 @@ export default function AdicionarPet() {
                 />
               </div>
             </div>
-
-            {/* Porte */}
             <div className="space-y-2">
               <Label htmlFor="size">Porte *</Label>
               <Select value={formData.size} onValueChange={(value) => handleInputChange("size", value)}>
@@ -416,8 +360,6 @@ export default function AdicionarPet() {
                 </SelectContent>
               </Select>
             </div>
-
-            {/* Descrição */}
             <div className="space-y-2">
               <Label htmlFor="description">Descrição (Opcional)</Label>
               <Textarea
@@ -428,12 +370,8 @@ export default function AdicionarPet() {
                 rows={4}
               />
             </div>
-
-            {/* Tags */}
             <div className="space-y-4">
               <Label>Tags do Pet</Label>
-              
-              {/* Tags predefinidas */}
               <div>
                 <p className="text-sm text-muted-foreground mb-2">Tags predefinidas:</p>
                 <div className="flex flex-wrap gap-2">
@@ -454,8 +392,6 @@ export default function AdicionarPet() {
                   ))}
                 </div>
               </div>
-
-              {/* Adicionar tag customizada */}
               <div className="flex gap-2">
                 <Input
                   placeholder="Adicionar tag personalizada..."
@@ -467,8 +403,6 @@ export default function AdicionarPet() {
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
-
-              {/* Tags selecionadas */}
               {formData.tags.length > 0 && (
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Tags selecionadas:</p>
@@ -486,8 +420,6 @@ export default function AdicionarPet() {
                 </div>
               )}
             </div>
-
-            {/* Botões */}
             <div className="flex gap-4 pt-6">
               <Button
                 type="button"

@@ -13,7 +13,6 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { PetSearchCard } from "@/components/PetSearchCard";
 import { useTranslation } from "react-i18next";
-
 interface Pet {
   id: string;
   name: string;
@@ -34,7 +33,6 @@ interface Pet {
   longitude?: number | null;
   distance?: number;
 }
-
 export default function BuscarPets() {
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
@@ -56,8 +54,6 @@ export default function BuscarPets() {
     specialNeeds: false,
     maxDistance: 0 // 0 = sem filtro de distância
   });
-
-  // Obter localização do usuário
   useEffect(() => {
     const getUserLocation = async () => {
       const location = await getCurrentLocation();
@@ -67,95 +63,80 @@ export default function BuscarPets() {
     };
     getUserLocation();
   }, []);
-
-  // Carregar pets do banco de dados
   useEffect(() => {
     loadPets();
   }, [userLocation]);
-
   const loadPets = async () => {
     try {
       const { data, error } = await supabase
-        .from('pets')
+        .from('card')
         .select('*')
         .order('created_at', { ascending: false });
-
       if (error) throw error;
-
       if (data) {
-        const formattedPets: Pet[] = data.map(pet => {
+        const formattedPets: Pet[] = data.map((card: any) => {
           let distance: number | undefined;
-          
-          // Calcular distância se ambas as localizações existirem
-          if (userLocation && pet.latitude && pet.longitude) {
+          if (userLocation && card.latitude && card.longitude) {
             distance = calculateDistance(
               userLocation.latitude,
               userLocation.longitude,
-              pet.latitude,
-              pet.longitude
+              card.latitude,
+              card.longitude
             );
           }
-          
           return {
-            id: pet.id,
-            name: pet.name,
-            image: pet.image_url,
-            species: pet.species as "cachorro" | "gato",
-            breed: pet.breed || 'SRD',
-            age: pet.age || 'adulto',
-            size: pet.size as "pequeno" | "medio" | "grande",
-            gender: pet.gender as "macho" | "femea",
-            location: pet.location || 'Brasil',
-            description: pet.description || '',
-            vaccinated: pet.vaccinated,
-            castrated: pet.castrated,
-            docile: pet.docile,
-            active: pet.active,
-            specialNeeds: pet.special_needs,
-            latitude: pet.latitude,
-            longitude: pet.longitude,
+            id: card.id,
+            name: card.name,
+            image: card.image_url || '',
+            species: card.species as "cachorro" | "gato",
+            breed: card.breed || 'SRD',
+            age: card.age || 'adulto',
+            size: card.size as "pequeno" | "medio" | "grande",
+            gender: card.gender as "macho" | "femea",
+            location: card.location || 'Brasil',
+            description: card.description || '',
+            vaccinated: card.vaccinated,
+            castrated: card.castrated,
+            docile: card.docile,
+            active: card.active,
+            specialNeeds: card.special_needs,
+            latitude: card.latitude,
+            longitude: card.longitude,
             distance,
           };
         });
-        
         setPets(formattedPets);
       }
     } catch (error) {
       console.error('Erro ao carregar pets:', error);
+      setPets([]);
     } finally {
       setLoading(false);
     }
   };
-
   const filteredPets = pets.filter(pet => {
     const matchesSearch = pet.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          pet.breed.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          pet.location.toLowerCase().includes(searchTerm.toLowerCase());
-
     const matchesSpecies = !filters.species || filters.species === "todas" || pet.species === filters.species;
     const matchesBreed = !filters.breed || pet.breed.toLowerCase().includes(filters.breed.toLowerCase());
     const matchesAge = !filters.age || filters.age === "todas" || pet.age === filters.age;
     const matchesSize = !filters.size || filters.size === "todos" || pet.size === filters.size;
     const matchesGender = !filters.gender || filters.gender === "todos" || pet.gender === filters.gender;
     const matchesLocation = !filters.location || pet.location.toLowerCase().includes(filters.location.toLowerCase());
-    
     const matchesVaccinated = !filters.vaccinated || pet.vaccinated === filters.vaccinated;
     const matchesCastrated = !filters.castrated || pet.castrated === filters.castrated;
     const matchesDocile = !filters.docile || pet.docile === filters.docile;
     const matchesActive = !filters.active || pet.active === filters.active;
     const matchesSpecialNeeds = !filters.specialNeeds || pet.specialNeeds === filters.specialNeeds;
-    
-    // Filtrar por distância se o filtro estiver ativo
     const matchesDistance = !filters.maxDistance || 
                            !pet.distance || 
                            pet.distance <= filters.maxDistance;
-
     return matchesSearch && matchesSpecies && matchesBreed && matchesAge && 
            matchesSize && matchesGender && matchesLocation && matchesVaccinated && 
            matchesCastrated && matchesDocile && matchesActive && matchesSpecialNeeds &&
            matchesDistance;
   });
-
   const clearFilters = () => {
     setFilters({
       species: "todas",
@@ -172,7 +153,6 @@ export default function BuscarPets() {
       maxDistance: 0
     });
   };
-
   const handleGetLocation = async () => {
     const location = await getCurrentLocation();
     if (location) {
@@ -189,11 +169,9 @@ export default function BuscarPets() {
       });
     }
   };
-
   return (
     <div className="min-h-screen bg-gradient-subtle">
       <div className="container mx-auto px-6 py-8">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2 text-foreground">
             {t('search.title')}
@@ -202,8 +180,6 @@ export default function BuscarPets() {
             {t('search.subtitle')}
           </p>
         </div>
-
-        {/* Search Bar */}
         <Card className="mb-6">
           <CardContent className="p-6">
             <div className="flex flex-col md:flex-row gap-4">
@@ -227,8 +203,6 @@ export default function BuscarPets() {
             </div>
           </CardContent>
         </Card>
-
-        {/* Advanced Filters */}
         {showFilters && (
           <Card className="mb-6 animate-fade-in">
             <CardHeader>
@@ -246,7 +220,6 @@ export default function BuscarPets() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Basic Filters */}
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 <div>
                   <Label htmlFor="species" className="text-sm font-medium mb-2 block">{t('search.species')}</Label>
@@ -261,7 +234,6 @@ export default function BuscarPets() {
                     </SelectContent>
                   </Select>
                 </div>
-
                 <div>
                   <Label htmlFor="age" className="text-sm font-medium mb-2 block">Idade</Label>
                   <Select value={filters.age} onValueChange={(value) => setFilters({...filters, age: value})}>
@@ -276,7 +248,6 @@ export default function BuscarPets() {
                     </SelectContent>
                   </Select>
                 </div>
-
                 <div>
                   <Label htmlFor="size" className="text-sm font-medium mb-2 block">Porte</Label>
                   <Select value={filters.size} onValueChange={(value) => setFilters({...filters, size: value})}>
@@ -291,7 +262,6 @@ export default function BuscarPets() {
                     </SelectContent>
                   </Select>
                 </div>
-
                 <div>
                   <Label htmlFor="gender" className="text-sm font-medium mb-2 block">Sexo</Label>
                   <Select value={filters.gender} onValueChange={(value) => setFilters({...filters, gender: value})}>
@@ -305,7 +275,6 @@ export default function BuscarPets() {
                     </SelectContent>
                   </Select>
                 </div>
-
                 <div>
                   <Label htmlFor="breed" className="text-sm font-medium mb-2 block">Raça</Label>
                   <Input
@@ -315,7 +284,6 @@ export default function BuscarPets() {
                     onChange={(e) => setFilters({...filters, breed: e.target.value})}
                   />
                 </div>
-
                 <div>
                   <Label htmlFor="location" className="text-sm font-medium mb-2 block">Localização</Label>
                   <div className="relative">
@@ -330,10 +298,7 @@ export default function BuscarPets() {
                    </div>
                  </div>
                </div>
-
                <Separator />
-
-               {/* Proximity Filter */}
                <div>
                  <Label className="text-sm font-medium mb-3 block">Filtrar por Proximidade</Label>
                  <div className="flex items-center gap-4">
@@ -370,10 +335,7 @@ export default function BuscarPets() {
                    )}
                  </div>
                </div>
-
                <Separator />
-
-              {/* Characteristics */}
               <div>
                 <Label className="text-sm font-medium mb-3 block">Características Especiais</Label>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
@@ -385,7 +347,6 @@ export default function BuscarPets() {
                     />
                     <Label htmlFor="vaccinated" className="text-sm">Vacinado</Label>
                   </div>
-
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="castrated"
@@ -394,7 +355,6 @@ export default function BuscarPets() {
                     />
                     <Label htmlFor="castrated" className="text-sm">Castrado</Label>
                   </div>
-
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="docile"
@@ -403,7 +363,6 @@ export default function BuscarPets() {
                     />
                     <Label htmlFor="docile" className="text-sm">Dócil</Label>
                   </div>
-
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="active"
@@ -412,7 +371,6 @@ export default function BuscarPets() {
                     />
                     <Label htmlFor="active" className="text-sm">Ativo</Label>
                   </div>
-
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="specialNeeds"
@@ -426,8 +384,6 @@ export default function BuscarPets() {
             </CardContent>
           </Card>
         )}
-
-        {/* Results */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold text-foreground">
             {t('search.resultsFound', { count: filteredPets.length })}
@@ -438,8 +394,6 @@ export default function BuscarPets() {
             </Badge>
           )}
         </div>
-
-        {/* Pet Results Grid */}
         {filteredPets.length === 0 ? (
           <Card className="text-center py-12">
             <CardContent>

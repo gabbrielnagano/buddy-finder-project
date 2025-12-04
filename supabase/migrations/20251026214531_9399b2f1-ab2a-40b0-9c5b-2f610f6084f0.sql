@@ -1,4 +1,3 @@
--- Create pets table
 CREATE TABLE public.pets (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
@@ -13,10 +12,8 @@ CREATE TABLE public.pets (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
--- Enable RLS
 ALTER TABLE public.pets ENABLE ROW LEVEL SECURITY;
 
--- RLS Policies
 CREATE POLICY "Anyone can view available pets"
   ON public.pets
   FOR SELECT
@@ -40,7 +37,6 @@ CREATE POLICY "Owners can delete their pets"
   TO authenticated
   USING (auth.uid() = owner_id);
 
--- Trigger for updated_at
 CREATE OR REPLACE FUNCTION public.update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -58,7 +54,6 @@ CREATE TRIGGER update_pets_updated_at
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('pet-images', 'pet-images', true);
 
--- Storage policies
 CREATE POLICY "Pet images are publicly accessible"
   ON storage.objects
   FOR SELECT

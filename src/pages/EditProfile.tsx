@@ -10,12 +10,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { ImageCropDialog } from "@/components/ImageCropDialog";
 import { toast } from "sonner";
-
 export default function EditProfile() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [nome, setNome] = useState("");
@@ -23,26 +21,21 @@ export default function EditProfile() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [showCropDialog, setShowCropDialog] = useState(false);
-
   useEffect(() => {
     fetchProfile();
   }, [user]);
-
   const fetchProfile = async () => {
     if (!user?.id) return;
-
     try {
       const { data, error } = await supabase
         .from('perfis')
         .select('nome, bio, avatar_url')
         .eq('id', user.id)
         .maybeSingle();
-
       if (error) {
         console.error('Erro ao buscar perfil:', error);
         toast.error("Erro ao carregar perfil");
       }
-
       if (data) {
         setNome(data.nome || "");
         setBio(data.bio || "");
@@ -55,7 +48,6 @@ export default function EditProfile() {
       setLoading(false);
     }
   };
-
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -63,7 +55,6 @@ export default function EditProfile() {
         toast.error("A imagem deve ter no máximo 5MB");
         return;
       }
-
       const reader = new FileReader();
       reader.onload = () => {
         setSelectedImage(reader.result as string);
@@ -72,14 +63,10 @@ export default function EditProfile() {
       reader.readAsDataURL(file);
     }
   };
-
   const handleCropComplete = async (croppedBlob: Blob) => {
     if (!user?.id) return;
-
     try {
       setSaving(true);
-
-      // Upload da imagem para o Supabase Storage
       const fileName = `avatar-${user.id}-${Date.now()}.jpg`;
       const { error: uploadError } = await supabase.storage
         .from('pet-images')
@@ -87,20 +74,15 @@ export default function EditProfile() {
           contentType: 'image/jpeg',
           upsert: true
         });
-
       if (uploadError) {
         console.error('Erro no upload:', uploadError);
         throw uploadError;
       }
-
-      // Obter URL pública da imagem
       const { data: { publicUrl } } = supabase.storage
         .from('pet-images')
         .getPublicUrl(fileName);
-
       setAvatarUrl(publicUrl);
       toast.success("Foto atualizada!");
-      
     } catch (error) {
       console.error('Erro ao fazer upload:', error);
       toast.error("Erro ao atualizar foto");
@@ -108,36 +90,27 @@ export default function EditProfile() {
       setSaving(false);
     }
   };
-
   const handleSave = async () => {
     if (!user?.id) return;
-
     if (!nome.trim()) {
       toast.error("O nome não pode estar vazio");
       return;
     }
-
     try {
       setSaving(true);
-
       const updateData = {
         id: user.id,
         nome: nome.trim(),
         avatar_url: avatarUrl,
         updated_at: new Date().toISOString()
       };
-
       console.log('Atualizando perfil com dados:', updateData);
-
-      // Tentar primeiro um UPDATE
       const { data: existingProfile } = await supabase
         .from('perfis')
         .select('id')
         .eq('id', user.id)
         .single();
-
       if (existingProfile) {
-        // Se o perfil existe, fazer UPDATE
         const { error } = await supabase
           .from('perfis')
           .update({
@@ -147,13 +120,11 @@ export default function EditProfile() {
             updated_at: new Date().toISOString()
           })
           .eq('id', user.id);
-
         if (error) {
           console.error('Erro no UPDATE:', error);
           throw error;
         }
       } else {
-        // Se não existe, fazer INSERT
         const { error } = await supabase
           .from('perfis')
           .insert({
@@ -164,25 +135,19 @@ export default function EditProfile() {
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           });
-
         if (error) {
           console.error('Erro no INSERT:', error);
           throw error;
         }
       }
-
       console.log('Perfil salvo com sucesso!');
       toast.success("Perfil atualizado com sucesso!");
-      
-      // Aguardar um pouco e depois navegar
       setTimeout(() => {
         navigate('/perfil', { replace: true });
-        // Forçar refresh da página após navegação
         setTimeout(() => {
           window.location.reload();
         }, 100);
       }, 1000);
-      
     } catch (error) {
       console.error('Erro ao salvar perfil:', error);
       toast.error("Erro ao salvar perfil: " + (error?.message || 'Erro desconhecido'));
@@ -190,11 +155,9 @@ export default function EditProfile() {
       setSaving(false);
     }
   };
-
   const initials = nome
     ? nome.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
     : user?.email?.[0].toUpperCase() || 'U';
-
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -202,7 +165,6 @@ export default function EditProfile() {
       </div>
     );
   }
-
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-3xl">
@@ -214,12 +176,9 @@ export default function EditProfile() {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Voltar
         </Button>
-
         <Card>
           <CardContent className="p-8">
             <h1 className="text-3xl font-bold text-foreground mb-8">Editar Perfil</h1>
-
-            {/* Avatar Section */}
             <div className="flex flex-col items-center mb-8">
               <div className="relative">
                 <Avatar className="h-32 w-32 border-4 border-primary/20">
@@ -249,8 +208,6 @@ export default function EditProfile() {
                 Clique no ícone para alterar sua foto de perfil
               </p>
             </div>
-
-            {/* Form Fields */}
             <div className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="nome">Nome *</Label>
@@ -273,8 +230,6 @@ export default function EditProfile() {
                 />
               </div>
             </div>
-
-            {/* Action Buttons */}
             <div className="flex gap-3 mt-8">
               <Button
                 variant="outline"
@@ -302,8 +257,6 @@ export default function EditProfile() {
           </CardContent>
         </Card>
       </div>
-
-      {/* Crop Dialog */}
       {selectedImage && (
         <ImageCropDialog
           open={showCropDialog}

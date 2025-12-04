@@ -2,26 +2,21 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { PetDetailsDialog } from "@/components/PetDetailsDialog";
-
-// Página pública para exibir detalhes do pet a partir do link compartilhado
-// SEO básico: título dinâmico e canonical
 const PetDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [petRecord, setPetRecord] = useState<any | null>(null);
   const [open, setOpen] = useState(true);
-
   useEffect(() => {
     const fetchPet = async () => {
       if (!id) return;
       setLoading(true);
       const { data, error } = await supabase
-        .from("pets")
+        .from("card")
         .select("*")
         .eq("id", id)
-        .single();
-
+        .single() as any;
       if (error) {
         console.error("Erro ao carregar pet:", error);
         setPetRecord(null);
@@ -30,11 +25,8 @@ const PetDetails = () => {
       }
       setLoading(false);
     };
-
     fetchPet();
   }, [id]);
-
-  // Mapeia o registro do banco para a estrutura esperada pelo PetDetailsDialog
   const petForDialog = useMemo(() => {
     if (!petRecord) return null;
     const p = petRecord as any;
@@ -56,19 +48,13 @@ const PetDetails = () => {
       specialNeeds: !!p.special_needs,
     } as any;
   }, [petRecord]);
-
-  // SEO básico + Open Graph para compartilhamento
   useEffect(() => {
     const title = petRecord?.name
       ? `${petRecord.name} – Adote um Pet`
       : "Pet – BuddyFinder";
     document.title = title;
-
-    // Limpar meta tags antigas
     const existingMetaTags = document.querySelectorAll('meta[property^="og:"], meta[name="twitter:"], meta[name="description"]');
     existingMetaTags.forEach(tag => tag.remove());
-
-    // Meta tags Open Graph para Facebook/WhatsApp
     const metaTags = [
       { property: 'og:title', content: title },
       { property: 'og:description', content: petRecord?.description || `Conheça ${petRecord?.name}, ${petRecord?.breed} disponível para adoção!` },
@@ -82,7 +68,6 @@ const PetDetails = () => {
       { name: 'twitter:description', content: petRecord?.description || `Conheça ${petRecord?.name}, ${petRecord?.breed} disponível para adoção!` },
       { name: 'twitter:image', content: petRecord?.image_url || '' }
     ];
-
     metaTags.forEach(({ property, name, content }) => {
       const meta = document.createElement('meta');
       if (property) meta.setAttribute('property', property);
@@ -90,8 +75,6 @@ const PetDetails = () => {
       meta.setAttribute('content', content);
       document.head.appendChild(meta);
     });
-
-    // canonical
     const linkEl = document.querySelector('link[rel="canonical"]') as
       | HTMLLinkElement
       | null;
@@ -105,7 +88,6 @@ const PetDetails = () => {
       document.head.appendChild(l);
     }
   }, [petRecord]);
-
   if (loading) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-orange-gradient">
@@ -113,7 +95,6 @@ const PetDetails = () => {
       </main>
     );
   }
-
   if (!petRecord) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-orange-gradient">
@@ -127,10 +108,8 @@ const PetDetails = () => {
       </main>
     );
   }
-
   return (
     <main className="min-h-screen bg-orange-gradient">
-      {/* H1 oculto para SEO */}
       <h1 className="sr-only">{petRecord.name} para adoção</h1>
       <PetDetailsDialog
         pet={petForDialog}
@@ -138,7 +117,6 @@ const PetDetails = () => {
         onOpenChange={(isOpen) => {
           setOpen(isOpen);
           if (!isOpen) {
-            // Volta para a busca ou home ao fechar
             navigate(-1);
           }
         }}
@@ -146,5 +124,4 @@ const PetDetails = () => {
     </main>
   );
 };
-
 export default PetDetails;

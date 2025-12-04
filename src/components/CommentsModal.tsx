@@ -7,14 +7,12 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Send, MessageCircle } from 'lucide-react';
-
 interface Comment {
   id: string;
   comentario: string;
   created_at: string;
   usuario_id: string;
 }
-
 interface CommentsModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -23,7 +21,6 @@ interface CommentsModalProps {
   onAddComment: (comment: string) => Promise<void>;
   loading: boolean;
 }
-
 export function CommentsModal({
   isOpen,
   onClose,
@@ -33,15 +30,12 @@ export function CommentsModal({
   loading
 }: CommentsModalProps) {
   const [newComment, setNewComment] = useState('');
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim()) return;
-
     await onAddComment(newComment);
     setNewComment('');
   };
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
@@ -51,9 +45,7 @@ export function CommentsModal({
             Comentários - {petName}
           </DialogTitle>
         </DialogHeader>
-        
         <div className="space-y-4">
-          {/* Lista de comentários */}
           <ScrollArea className="h-60">
             {comments.length > 0 ? (
               <div className="space-y-3 pr-4">
@@ -84,8 +76,6 @@ export function CommentsModal({
               </div>
             )}
           </ScrollArea>
-
-          {/* Formulário para novo comentário */}
           <form onSubmit={handleSubmit} className="space-y-3">
             <Textarea
               value={newComment}

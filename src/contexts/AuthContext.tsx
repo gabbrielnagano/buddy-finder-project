@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-
 interface AuthContextType {
   user: User | null;
   session: Session | null;
@@ -11,9 +10,7 @@ interface AuthContextType {
   resetPassword: (email: string) => Promise<{ error: any }>;
   loading: boolean;
 }
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
@@ -21,14 +18,11 @@ export const useAuth = () => {
   }
   return context;
 };
-
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
-    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setSession(session);
@@ -36,17 +30,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setLoading(false);
       }
     );
-
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
-
     return () => subscription.unsubscribe();
   }, []);
-
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -54,13 +44,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
     return { error };
   };
-
   const signUp = async (email: string, password: string) => {
-    // Usar localhost:3000 para desenvolvimento (porta configurada no Vite)
     const redirectUrl = window.location.hostname === 'localhost' 
       ? 'http://localhost:3000/'
       : `${window.location.origin}/`;
-    
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -70,23 +57,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
     return { error };
   };
-
   const signOut = async () => {
     await supabase.auth.signOut();
   };
-
   const resetPassword = async (email: string) => {
-    // Usar localhost:3000 para desenvolvimento (porta configurada no Vite)
     const redirectUrl = window.location.hostname === 'localhost'
       ? 'http://localhost:3000/reset-password'
       : `${window.location.origin}/reset-password`;
-    
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: redirectUrl,
     });
     return { error };
   };
-
   const value = {
     user,
     session,
@@ -96,6 +78,5 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     resetPassword,
     loading,
   };
-
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

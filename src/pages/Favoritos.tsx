@@ -5,15 +5,12 @@ import { useFavorites } from "@/contexts/FavoritesContext";
 import { PetSearchCard } from "@/components/PetSearchCard";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-
 export default function Favoritos() {
   const { favorites } = useFavorites();
   const { t } = useTranslation();
-
   return (
     <div className="min-h-screen bg-gradient-subtle">
       <div className="container mx-auto px-6 py-8">
-        {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
             <Heart className="h-8 w-8 text-red-500 fill-current" />
@@ -25,15 +22,11 @@ export default function Favoritos() {
             {t('favorites.subtitle')}
           </p>
         </div>
-
-        {/* Results */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold text-foreground">
             {t('favorites.count', { count: favorites.length })}
           </h2>
         </div>
-
-        {/* Favorites Grid */}
         {favorites.length === 0 ? (
           <Card className="text-center py-12">
             <CardContent>

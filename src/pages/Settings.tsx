@@ -12,7 +12,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { ThemePreview } from "@/components/ThemePreview";
-
 const Settings = () => {
   const { theme, setTheme } = useTheme();
   const { t, i18n } = useTranslation();
@@ -33,11 +32,9 @@ const Settings = () => {
     }
   });
   const [layoutStyle, setLayoutStyle] = useState("grid");
-
   useEffect(() => {
     setPreviewTheme(theme || "system");
   }, [theme]);
-
   const handleSaveSettings = () => {
     localStorage.setItem('language', language);
     toast({
@@ -46,7 +43,6 @@ const Settings = () => {
       duration: 3000,
     });
   };
-
   const handleLanguageChange = (newLanguage: string) => {
     setLanguage(newLanguage);
     i18n.changeLanguage(newLanguage);
@@ -57,7 +53,6 @@ const Settings = () => {
       duration: 3000,
     });
   };
-
   const handleThemePreview = (newTheme: string) => {
     setPreviewTheme(newTheme);
     setTheme(newTheme);
@@ -67,7 +62,6 @@ const Settings = () => {
       duration: 3000,
     });
   };
-
   const toggleSpecies = (species: string) => {
     setPetPreferences(prev => ({
       ...prev,
@@ -76,7 +70,6 @@ const Settings = () => {
         : [...prev.favoriteSpecies, species]
     }));
   };
-
   const speciesOptions = [
     { id: "dogs", label: t('settings.species.dogs'), icon: "🐕" },
     { id: "cats", label: t('settings.species.cats'), icon: "🐱" },
@@ -85,14 +78,12 @@ const Settings = () => {
     { id: "fish", label: t('settings.species.fish'), icon: "🐠" },
     { id: "reptiles", label: t('settings.species.reptiles'), icon: "🦎" }
   ];
-
   return (
     <div className="container mx-auto py-6 px-4 max-w-4xl">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">{t('settings.title')}</h1>
         <p className="text-muted-foreground">{t('settings.subtitle')}</p>
       </div>
-
       <Tabs defaultValue="general" className="space-y-6">
         <TabsList className="grid grid-cols-1 sm:grid-cols-3 w-full">
           <TabsTrigger value="general" className="flex items-center gap-2">
@@ -108,7 +99,6 @@ const Settings = () => {
             <span className="hidden sm:inline">Pets</span>
           </TabsTrigger>
         </TabsList>
-
         <TabsContent value="general" className="space-y-6">
           <Card>
             <CardHeader>
@@ -155,12 +145,9 @@ const Settings = () => {
                     </SelectContent>
                   </Select>
                 </div>
-
                 <ThemePreview theme={previewTheme} />
               </div>
-
               <Separator />
-
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <Label className="text-sm font-medium">{t('settings.appearance.language')}</Label>
@@ -194,9 +181,7 @@ const Settings = () => {
                   </SelectContent>
                 </Select>
               </div>
-
               <Separator />
-
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <Label className="text-sm font-medium">{t('settings.appearance.layout')}</Label>
@@ -218,7 +203,6 @@ const Settings = () => {
             </CardContent>
           </Card>
         </TabsContent>
-
         <TabsContent value="notifications" className="space-y-6">
           <Card>
             <CardHeader>
@@ -245,9 +229,7 @@ const Settings = () => {
                   }
                 />
               </div>
-
               <Separator />
-
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <Label className="text-sm font-medium">{t('settings.notifications.email')}</Label>
@@ -262,9 +244,7 @@ const Settings = () => {
                   }
                 />
               </div>
-
               <Separator />
-
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <Label className="text-sm font-medium">{t('settings.notifications.sms')}</Label>
@@ -282,7 +262,6 @@ const Settings = () => {
             </CardContent>
           </Card>
         </TabsContent>
-
         <TabsContent value="pets" className="space-y-6">
           <Card>
             <CardHeader>
@@ -318,9 +297,7 @@ const Settings = () => {
                   ))}
                 </div>
               </div>
-
               <Separator />
-
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <Label className="text-sm font-medium">{t('settings.pets.newPetAlerts')}</Label>
@@ -335,9 +312,7 @@ const Settings = () => {
                   }
                 />
               </div>
-
               <Separator />
-
               <div className="space-y-4">
                 <Label className="text-sm font-medium">{t('settings.pets.defaultFilters')}</Label>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -364,7 +339,6 @@ const Settings = () => {
                       </SelectContent>
                     </Select>
                   </div>
-
                   <div className="space-y-2">
                     <Label className="text-xs text-muted-foreground">{t('settings.pets.size')}</Label>
                     <Select
@@ -387,7 +361,6 @@ const Settings = () => {
                       </SelectContent>
                     </Select>
                   </div>
-
                   <div className="space-y-2">
                     <Label className="text-xs text-muted-foreground">{t('settings.pets.location')}</Label>
                     <Select
@@ -419,5 +392,4 @@ const Settings = () => {
     </div>
   );
 };
-
 export default Settings;

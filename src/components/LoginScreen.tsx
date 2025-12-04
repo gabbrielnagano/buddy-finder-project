@@ -7,7 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { toast } from '@/components/ui/use-toast';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import loadingLogo from '@/assets/buddyfinder-logo.png';
-
 export const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -16,15 +15,12 @@ export const LoginScreen = () => {
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { signIn, signUp, resetPassword } = useAuth();
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
     try {
       if (isForgotPassword) {
         const { error } = await resetPassword(email);
-        
         if (error) {
           toast({
             title: "Erro",
@@ -43,7 +39,6 @@ export const LoginScreen = () => {
         const { error } = isSignUp 
           ? await signUp(email, password)
           : await signIn(email, password);
-
         if (error) {
           toast({
             title: "Erro",
@@ -68,7 +63,6 @@ export const LoginScreen = () => {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-orange-gradient p-4">
       <Card className="w-full max-w-md">
@@ -109,7 +103,6 @@ export const LoginScreen = () => {
                 />
               </div>
             </div>
-            
             {!isForgotPassword && (
               <div className="space-y-2">
                 <Label htmlFor="password">Senha</Label>
@@ -140,7 +133,6 @@ export const LoginScreen = () => {
                 </div>
               </div>
             )}
-
             <Button 
               type="submit" 
               className="w-full" 
@@ -149,7 +141,6 @@ export const LoginScreen = () => {
             >
               {isLoading ? 'Carregando...' : (isForgotPassword ? 'Enviar Email' : (isSignUp ? 'Criar Conta' : 'Entrar'))}
             </Button>
-
             <div className="space-y-2 text-center text-sm">
               {!isSignUp && !isForgotPassword && (
                 <button
@@ -160,7 +151,6 @@ export const LoginScreen = () => {
                   Esqueci minha senha
                 </button>
               )}
-              
               {isForgotPassword ? (
                 <div className="text-muted-foreground">
                   Lembrou sua senha?{' '}

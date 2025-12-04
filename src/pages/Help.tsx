@@ -6,14 +6,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
-
 interface FAQItem {
   id: string;
   question: string;
   answer: string;
   category: string;
 }
-
 const faqData: FAQItem[] = [
   {
     id: "1",
@@ -58,7 +56,6 @@ const faqData: FAQItem[] = [
     answer: "Você pode entrar em contato conosco através do email suporte@buddyfinder.com ou através das redes sociais. Descreva o problema detalhadamente para que possamos ajudar."
   }
 ];
-
 const guides = [
   {
     title: "Primeiro acesso",
@@ -82,22 +79,18 @@ const guides = [
     ]
   }
 ];
-
 export default function Help() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedFAQ, setExpandedFAQ] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("Todas");
-
   const categories = ["Todas", ...Array.from(new Set(faqData.map(item => item.category)))];
-
   const filteredFAQ = faqData.filter(item => {
     const matchesSearch = item.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          item.answer.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "Todas" || item.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
-
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -109,8 +102,6 @@ export default function Help() {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Voltar
         </Button>
-
-        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-primary mb-2 flex items-center justify-center gap-2">
             <PawPrint className="h-8 w-8" />
@@ -120,8 +111,6 @@ export default function Help() {
             Encontre respostas para suas dúvidas sobre o BuddyFinder
           </p>
         </div>
-
-        {/* Search */}
         <Card className="mb-8">
           <CardContent className="p-6">
             <div className="relative mb-4">
@@ -133,8 +122,6 @@ export default function Help() {
                 className="pl-10"
               />
             </div>
-            
-            {/* Category Filter */}
             <div className="flex flex-wrap gap-2">
               {categories.map((category) => (
                 <Badge
@@ -149,8 +136,6 @@ export default function Help() {
             </div>
           </CardContent>
         </Card>
-
-        {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate('/adicionar-pet')}>
             <CardContent className="p-4 text-center">
@@ -159,7 +144,6 @@ export default function Help() {
               <p className="text-sm text-muted-foreground">Cadastre seu pet para adoção</p>
             </CardContent>
           </Card>
-          
           <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate('/buscar-pets')}>
             <CardContent className="p-4 text-center">
               <Search className="h-8 w-8 text-primary mx-auto mb-2" />
@@ -167,7 +151,6 @@ export default function Help() {
               <p className="text-sm text-muted-foreground">Encontre seu novo amigo</p>
             </CardContent>
           </Card>
-          
           <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate('/perfil')}>
             <CardContent className="p-4 text-center">
               <Settings className="h-8 w-8 text-primary mx-auto mb-2" />
@@ -176,8 +159,6 @@ export default function Help() {
             </CardContent>
           </Card>
         </div>
-
-        {/* Guides */}
         <Card className="mb-8">
           <CardHeader>
             <CardTitle>Guias Rápidos</CardTitle>
@@ -204,8 +185,6 @@ export default function Help() {
             </div>
           </CardContent>
         </Card>
-
-        {/* FAQ */}
         <Card className="mb-8">
           <CardHeader>
             <CardTitle>Perguntas Frequentes</CardTitle>
@@ -241,7 +220,6 @@ export default function Help() {
                   </CollapsibleContent>
                 </Collapsible>
               ))}
-              
               {filteredFAQ.length === 0 && (
                 <div className="text-center py-8">
                   <p className="text-muted-foreground">Nenhuma pergunta encontrada para sua busca.</p>
@@ -250,8 +228,6 @@ export default function Help() {
             </div>
           </CardContent>
         </Card>
-
-        {/* Contact */}
         <Card>
           <CardHeader>
             <CardTitle>Precisa de mais ajuda?</CardTitle>
@@ -266,7 +242,6 @@ export default function Help() {
                   <p className="text-sm text-muted-foreground">suporte@buddyfinder.com</p>
                 </div>
               </div>
-              
               <div className="flex items-center gap-3 p-4 border rounded-lg">
                 <MessageCircle className="h-5 w-5 text-primary" />
                 <div>
@@ -274,7 +249,6 @@ export default function Help() {
                   <p className="text-sm text-muted-foreground">Disponível 9h às 18h</p>
                 </div>
               </div>
-              
               <div className="flex items-center gap-3 p-4 border rounded-lg">
                 <Phone className="h-5 w-5 text-primary" />
                 <div>
@@ -283,7 +257,6 @@ export default function Help() {
                 </div>
               </div>
             </div>
-            
             <div className="mt-6 p-4 bg-primary/5 rounded-lg">
               <p className="text-sm text-muted-foreground">
                 <strong>Dica:</strong> Para um atendimento mais rápido, tenha em mãos as informações sobre 
