@@ -162,4 +162,4 @@ Este projeto está sob a licença MIT.
 
 ## Autor
 
-Desenvolvido por [@gmartinssr](https://github.com/gmartinssr)
+Desenvolvido por [@gabbrielnagano](https://github.com/gabbrielnagano)
